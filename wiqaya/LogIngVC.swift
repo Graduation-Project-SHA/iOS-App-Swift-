@@ -128,7 +128,7 @@ class LogIngVC: UIViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let ForgotPasswordVC = storyboard.instantiateViewController(withIdentifier: "ForgotPassword") as? ForgotPasswordVC {
             
-            // خليها sheet مش fullscreen
+            
             ForgotPasswordVC.modalPresentationStyle = .pageSheet
             
             if let sheet = ForgotPasswordVC.sheetPresentationController {
