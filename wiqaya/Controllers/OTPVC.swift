@@ -21,6 +21,11 @@ class OTPVC: UIViewController {
     @IBOutlet weak var phoneView: UIView!
     @IBOutlet weak var mainPhoneNumber: UILabel!
 
+    @IBOutlet weak var mainOtpNumper: UILabel!
+    
+    @IBOutlet weak var txtOtp: UITextField!
+    
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,6 +105,26 @@ class OTPVC: UIViewController {
             countryImage.image = nil
         }
     }
+    
+    
+    
+    @IBAction func doneButton(_ sender: Any) {
+        resetPlaceholdersAndBorders()
+        
+        var hasEmptyField = false
+        if txtPhone.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+            markAsEmpty(textField: txtPhone, placeholder: "Please enter your email")
+            hasEmptyField = true
+        }
+        if txtOtp.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+            markAsEmpty(textField: txtOtp, placeholder: "Please enter your password")
+            hasEmptyField = true
+        }
+        if hasEmptyField { return }
+
+        print("OTP is sent")
+    }
+    
     
     // MARK: - Back Button Action
     @IBAction func backButton(_ sender: Any) {

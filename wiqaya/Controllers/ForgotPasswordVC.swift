@@ -47,7 +47,15 @@ class ForgotPasswordVC: UIViewController {
     
     
     @IBAction func resetPassButton(_ sender: Any) {
+        resetPlaceholdersAndBorders()
         
+        var hasEmptyField = false
+        if textEmail.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+            markAsEmpty(textField: textEmail, placeholder: "Please enter your email")
+            hasEmptyField = true
+        }
+        if hasEmptyField { return }
+
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
             otpVC.modalPresentationStyle = .fullScreen
