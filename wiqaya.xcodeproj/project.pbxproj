@@ -14,7 +14,7 @@
 		3BD65A8C2EA235D300D8CA71 /* Exceptions for "wiqaya" folder in "wiqaya" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Resources/Info.plist,
 			);
 			target = 3BD65A792EA235D100D8CA71 /* wiqaya */;
 		};
@@ -147,7 +147,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F95TQFH8K3;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = wiqaya/Info.plist;
+				INFOPLIST_FILE = wiqaya/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -175,7 +175,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = F95TQFH8K3;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = wiqaya/Info.plist;
+				INFOPLIST_FILE = wiqaya/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

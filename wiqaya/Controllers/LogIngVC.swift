@@ -36,10 +36,15 @@ class LogIngVC: UIViewController {
     @IBOutlet weak var textPass: UITextField!
     @IBOutlet weak var showPass: UIButton!
 
+    @IBOutlet weak var myScrollView: UIScrollView!
     
+    
+    let gradient = GradientManager()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    
+        myScrollView.isHidden = true
         authView.layer.cornerRadius = 20
 //        if var config = forgotPassword.configuration {
 //            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
@@ -83,6 +88,15 @@ class LogIngVC: UIViewController {
 
     }
     
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        // استدعاء الميثود لتطبيق التدرج على خلفية الـ View
+        gradient.applySmoothBlueGradient(to: self.view, lightRatio: 0.04, midRatio: 0.09, darkRatio: 0.90)
+    }
+
+    
     @IBAction func normalUserButton(_ sender: UIButton) {
         iAmDoctor = false
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
@@ -112,12 +126,15 @@ class LogIngVC: UIViewController {
             logInView.isHidden = false
 
             print("🔑 تسجيل الدخول")
-            
+            myScrollView.isHidden = true
+            logInView.isHidden = false
+
         } else if sender.selectedSegmentIndex == 0 {
             
             print("🆕 إنشاء حساب")
             logInView.isHidden = true
-            
+            myScrollView.isHidden = false
+
             
         }
 
