@@ -12,7 +12,12 @@ class LogIngVC: UIViewController {
     var iAmDoctor: Bool = false
     var country: String = ""
     var phoneCode: String = ""
+    var myDate : String = ""
+    var isDoctor: String = "User"
+    var gender: String = ""
     
+    let api = APIService()
+
 
     // MARK: - Login as User and Doctor View
 
@@ -37,6 +42,7 @@ class LogIngVC: UIViewController {
     @IBOutlet weak var textPass: UITextField!
     @IBOutlet weak var showPass: UIButton!
 
+    @IBOutlet weak var errorMsg: UILabel!
     
     
     
@@ -79,6 +85,8 @@ class LogIngVC: UIViewController {
     
     
     
+    
+    
     @IBOutlet weak var mainDate: UILabel!
     
     @IBOutlet weak var mydatePicker: UIDatePicker!
@@ -86,7 +94,13 @@ class LogIngVC: UIViewController {
     @IBOutlet weak var imageDate: UIImageView!
     
     
-
+    @IBOutlet weak var man: UIButton!
+    
+    
+    @IBOutlet weak var women: UIButton!
+    
+    
+    
     
     @IBOutlet weak var mainPassRegister: UILabel!
     
@@ -133,7 +147,8 @@ class LogIngVC: UIViewController {
     
     @IBOutlet weak var markUnallowedSymbols: UIImageView!
     
-    
+    @IBOutlet weak var errorRegisterMsg: UILabel!
+
     
     
 
@@ -210,8 +225,8 @@ class LogIngVC: UIViewController {
         
         
         
-        
-        
+        errorRegisterMsg.isHidden = true
+        errorMsg.isHidden = true
         EmailView.isHidden = true
         PassView.isHidden = true
         firstNameView.isHidden = true
@@ -235,11 +250,15 @@ class LogIngVC: UIViewController {
         doctor.backgroundColor = .clear
 
     }
+    
+    var passError : Bool = false
     @objc func textFieldsChanged(_ sender: UITextField) {
         validatePassword()
     }
         
     private func validatePassword() {
+        passError = false
+
         let password = txtPassRegister.text ?? ""
         let confirmPassword = txtConfirmPassRegister.text ?? ""
         
@@ -247,33 +266,60 @@ class LogIngVC: UIViewController {
         let green = UIColor(named: "AppGreen") ?? .systemGreen
         let red = UIColor(named: "AppRed") ?? .systemRed
         
+        
         // الشرط 1: تطابق كلمتي المرور
         if confirmPassword.isEmpty {
-            // المستخدم لسه ما كتبش في خانة التأكيد => خليه باللون الرمادي أو أخفي التلوين
             lblPasswordMatches.textColor = .systemGray3
             markPasswordMatches.tintColor = .systemGray3
         } else {
-            // المستخدم كتب فعلاً => افحص التطابق
             let passwordsMatch = !password.isEmpty && (password == confirmPassword)
             lblPasswordMatches.textColor = passwordsMatch ? green : red
             markPasswordMatches.tintColor = passwordsMatch ? green : red
+            markPasswordMatches.image = passwordsMatch
+            ? UIImage(systemName: "checkmark.circle.fill")
+            : UIImage(systemName: "xmark.circle.fill")
+            
+            if !passwordsMatch { passError = true }
         }
-
+        
         // الشرط 2: الطول لا يقل عن 8
         let has8Letters = password.count >= 8
         lblPassword8letters.textColor = has8Letters ? green : red
         markPassword8letters.tintColor = has8Letters ? green : red
+        markPassword8letters.image = has8Letters
+        ? UIImage(systemName: "checkmark.circle.fill")
+        : UIImage(systemName: "xmark.circle.fill")
         
-        // الشرط 3: يحتوي على أرقام
+        if !has8Letters { passError = true }
+        
+        
+        
+        // 🔹 الشرط 3: يحتوي على رقم + حرف كبير + حرف صغير
         let hasNumbers = password.rangeOfCharacter(from: .decimalDigits) != nil
-        lbllblPasswordHasNumbers.textColor = hasNumbers ? green : red
-        marklblPasswordHasNumbers.tintColor = hasNumbers ? green : red
+        let hasUppercase = password.rangeOfCharacter(from: .uppercaseLetters) != nil
+        let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
+        let hasStrongMix = hasNumbers && hasUppercase && hasLowercase
+        
+        lbllblPasswordHasNumbers.textColor = hasStrongMix ? green : red
+        marklblPasswordHasNumbers.tintColor = hasStrongMix ? green : red
+        marklblPasswordHasNumbers.image = hasStrongMix
+        ? UIImage(systemName: "checkmark.circle.fill")
+        : UIImage(systemName: "xmark.circle.fill")
+        
+        if !hasStrongMix { passError = true }
+
         
         // الشرط 4: الرموز غير المسموح بها
         let unallowedCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+=[]{}|\\:;\"'<>,.?/~`")
         let containsUnallowed = password.rangeOfCharacter(from: unallowedCharacters) != nil
         lblUnallowedSymbols.textColor = containsUnallowed ? red : green
         markUnallowedSymbols.tintColor = containsUnallowed ? red : green
+        markUnallowedSymbols.image = containsUnallowed
+        ? UIImage(systemName: "xmark.circle.fill")
+        : UIImage(systemName: "checkmark.circle.fill")
+        
+        if containsUnallowed { passError = true }
+        
     }
 
     
@@ -348,7 +394,7 @@ class LogIngVC: UIViewController {
     
     @IBAction func normalUserButton(_ sender: UIButton) {
         iAmDoctor = false
-
+        isDoctor = "Patient"
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         doctor.backgroundColor = .clear
         print("normalUserButton")
@@ -357,6 +403,7 @@ class LogIngVC: UIViewController {
     
     @IBAction func doctorButton(_ sender: UIButton) {
         iAmDoctor = true
+        isDoctor = "Doctor"
         myScrollView.isHidden = true
 
         doctor.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
@@ -434,6 +481,25 @@ class LogIngVC: UIViewController {
         }
 
     }
+    
+    
+    @IBAction func menButton(_ sender: Any) {
+        gender = "MALE"
+        print(gender)
+        man.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
+        women.backgroundColor = .clear
+
+    }
+    
+    @IBAction func womenButton(_ sender: Any) {
+        gender = "FEMALE"
+        print(gender)
+        women.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
+        man.backgroundColor = .clear
+
+    }
+    
+    
     
     @IBAction func showPassButton(_ sender: UIButton) {
         UIView.animate(withDuration: 0.15,
@@ -544,25 +610,52 @@ class LogIngVC: UIViewController {
         }
         if hasEmptyField { return }
         
-//        if let tabBarVC = storyboard?.instantiateViewController(withIdentifier: "MainTabBarController") as? UITabBarController {
-//            tabBarVC.modalPresentationStyle = .fullScreen
-//            present(tabBarVC, animated: true)
-//        }
+        let email = (textEmail.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let password = textPass.text ?? ""
+        
+        api.loginUser(email: email, password: password) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let response):
+                    // ✅ طباعة البيانات القادمة من السيرفر
+                    self.errorMsg.isHidden = false
+                    self.errorMsg.text = "Login successful"
+                    self.errorMsg.textColor = .systemGreen
+
+                    print("✅ Login successful!")
+                    print("🔑 Access token: \(response.tokens.accessToken)")
+                    print("👤 User name: \(response.date.payload.name)")
+                    print("📧 Email: \(response.date.payload.email)")
+                    print("🧩 Role: \(response.date.payload.role)")
+                case .failure(let error):
+                    self.errorMsg.isHidden = false
+                    self.errorMsg.text = error.localizedDescription
+                    print("❌ Login error: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    // MARK: - Register as User action
+    // MARK: - API for Registr As User
+    
+    @IBAction func dateButton(_ sender: UIDatePicker) {
+        let formatter = DateFormatter()
+        
+        // تنسيق السيرفر المطلوب: 1990-03-12T00:00:00.000Z
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = TimeZone(abbreviation: "UTC") // مهم جدًا عشان يضيف Z في الآخر
+        
+        // تحويل التاريخ من الـ picker إلى String
+        myDate = formatter.string(from: sender.date)
+        print(myDate)
 
     }
-    
-    // MARK: - Register as User action
-    
-    @IBAction func dateButton(_ sender: Any) {
-        
-    }
-    
-    
     @IBAction func createAccButton(_ sender: Any) {
         resetPlaceholdersAndBorders()
-
+        
         var hasEmptyField = false
-
+        
         if txtFirstName.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
             markAsEmpty(textField: txtFirstName, placeholder: "من فضلك ادخل اسمك الاول هنا..")
             hasEmptyField = true
@@ -580,7 +673,7 @@ class LogIngVC: UIViewController {
             hasEmptyField = true
         }
         if txtPassRegister.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
-            markAsEmpty(textField: txtPassRegister, placeholder: "من فضلك ادخل رقم كلمة السر هنا..")
+            markAsEmpty(textField: txtPassRegister, placeholder: "من فضلك ادخل كلمة السر هنا..")
             hasEmptyField = true
         }
         if txtConfirmPassRegister.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
@@ -588,16 +681,78 @@ class LogIngVC: UIViewController {
             hasEmptyField = true
         }
         if hasEmptyField { return }
-
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
-            otpVC.modalPresentationStyle = .fullScreen
-            otpVC.modalTransitionStyle = .crossDissolve // أنيميشن لطيف (اختياري)
-            present(otpVC, animated: true)
+        
+        guard !myDate.isEmpty else {
+            print("⚠️ من فضلك اختر تاريخ الميلاد أولاً")
+            return
         }
 
+        if !passError {
+            // ✅ تأكد إن القيم نظيفة وصحيحة
+            let email = (txtEmailRegister.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+            let password = txtPassRegister.text ?? ""
+            let name = "\(txtFirstName.text ?? "") \(txtLastName.text ?? "")"
+            let dob = myDate
+            let gender = gender
+            let address = country
+            let role = isDoctor
+            
+            api.signUpUser(
+                email: email,
+                password: password,
+                name: name,
+                dob: dob,
+                gender: gender,
+                address: address,
+                role: role
+            ) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let response):
+                        print("✅ \(response.message)")
+                        print("👤 Created user: \(response.data.name), role: \(response.data.role)")
+                        
+                        // الانتقال بعد النجاح
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
+                            otpVC.modalPresentationStyle = .fullScreen
+                            otpVC.modalTransitionStyle = .crossDissolve
+                            self.present(otpVC, animated: true)
+                        }
+                        
+                    case .failure(let error):
+                        self.errorRegisterMsg.isHidden = false
+                        self.errorRegisterMsg.text = error.localizedDescription
+                        print("❌ Sign up error: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }else {
+            // 🟥 اهتز فقط الشروط اللي فيها أخطاء (لونها أحمر)
+            
+            if lblPasswordMatches.textColor == .systemRed || markPasswordMatches.tintColor == .systemRed {
+                shake(textField: txtConfirmPassRegister)
+            }
+            
+            if lblPassword8letters.textColor == .systemRed || markPassword8letters.tintColor == .systemRed {
+                shake(textField: txtPassRegister)
+            }
+            
+            if lbllblPasswordHasNumbers.textColor == .systemRed || marklblPasswordHasNumbers.tintColor == .systemRed {
+                shake(textField: txtPassRegister)
+            }
+            
+            if lblUnallowedSymbols.textColor == .systemRed || markUnallowedSymbols.tintColor == .systemRed {
+                shake(textField: txtPassRegister)
+            }
+            
+            // 🔔 ممكن تضيف اهتزاز بسيط للشاشة كتنبيه عام (اختياري)
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
+        }
     }
-    
+
+
     
     
 }
@@ -703,4 +858,12 @@ extension LogIngVC {
         animation.values = [-10, 10, -8, 8, -5, 5, 0]
         textField.layer.add(animation, forKey: "shake")
     }
+    private func shake(view: UIView) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.4
+        animation.values = [-10, 10, -8, 8, -5, 5, 0]
+        view.layer.add(animation, forKey: "shake")
+    }
+
 }

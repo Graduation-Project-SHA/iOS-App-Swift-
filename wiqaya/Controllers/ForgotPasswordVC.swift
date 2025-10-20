@@ -6,8 +6,9 @@
 //
 
 import UIKit
-
+import IQKeyboardManagerSwift
 class ForgotPasswordVC: UIViewController {
+    let api = APIService()
 
     
     @IBOutlet weak var mainEmailLabel: UILabel!
@@ -18,8 +19,6 @@ class ForgotPasswordVC: UIViewController {
     @IBOutlet weak var cancel: UIButton!
     
     
-    @IBOutlet weak var phoneView: UIView!
-    @IBOutlet weak var mainPhoneNumber: UILabel!
     @IBOutlet weak var EmailView: UIView!
 
     
@@ -30,6 +29,8 @@ class ForgotPasswordVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        IQKeyboardManager.shared.disabledDistanceHandlingClasses = [ForgotPasswordVC.self]
+
         resetPass.font = .boldSystemFont(ofSize: 25)
         
         [textEmail].forEach {
@@ -56,11 +57,41 @@ class ForgotPasswordVC: UIViewController {
         }
         if hasEmptyField { return }
 
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
-            otpVC.modalPresentationStyle = .fullScreen
-            otpVC.modalTransitionStyle = .crossDissolve // أنيميشن لطيف (اختياري)
-            present(otpVC, animated: true)
+        let email = (textEmail.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+
+        api.requestPasswordReset(email: email) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    print("✅ Password reset request sent successfully: \(message)")
+                    
+                    let alert = UIAlertController(
+                        title: "Success",
+                        message: "Verification code has been sent to your email.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
+                            otpVC.modalPresentationStyle = .fullScreen
+                            otpVC.modalTransitionStyle = .crossDissolve
+                            self.present(otpVC, animated: true)
+                        }
+                    })
+                    self.present(alert, animated: true)
+                    
+                case .failure(let error):
+                    print("❌ Failed to send password reset request: \(error.localizedDescription)")
+                    
+                    let alert = UIAlertController(
+                        title: "Error",
+                        message: "Failed to send reset request. Please check your email and try again.",
+                        preferredStyle: .alert
+                    )
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
         }
 
     }

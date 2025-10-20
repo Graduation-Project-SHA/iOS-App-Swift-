@@ -6,17 +6,16 @@
 //
 
 import UIKit
-
+import IQKeyboardManagerSwift
 class OTPVC: UIViewController {
     
     // MARK: - Variables
     var country: String = ""
     var phoneCode: String = ""
-    
+    let api = APIService()
+
     // MARK: - Outlets
-    @IBOutlet weak var pullbutton: UIButton!
     @IBOutlet weak var txtPhone: UITextField!
-    @IBOutlet weak var countryImage: UIImageView!
     
     @IBOutlet weak var phoneView: UIView!
     @IBOutlet weak var mainPhoneNumber: UILabel!
@@ -25,11 +24,13 @@ class OTPVC: UIViewController {
     
     @IBOutlet weak var txtOtp: UITextField!
     
+    @IBOutlet weak var reSend: UIButton!
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        IQKeyboardManager.shared.disabledDistanceHandlingClasses = [OTPVC.self]
+
         [txtPhone].forEach {
             $0?.delegate = self
             $0?.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
@@ -39,74 +40,9 @@ class OTPVC: UIViewController {
         }
         phoneView.isHidden = true
 
-        // إعداد مظهر صورة العلم
-        countryImage.contentMode = .scaleAspectFit
-        countryImage.clipsToBounds = true
         
-        // إعداد الزرار
-        pullbutton.setTitle("", for: .normal) // نخليه من غير نص
-        pullbutton.showsMenuAsPrimaryAction = true
         
-        // تهيئة القائمة المنسدلة
-        configurePullDownButton()
     }
-    
-    // MARK: - Configure DropDown Menu
-    func configurePullDownButton() {
-        // الإجراءات لكل دولة
-        let saudiAction = UIAction(title: "Saudi Arabia") { _ in
-            self.handleSelection(country: "Saudi Arabia")
-        }
-        
-        let egyptAction = UIAction(title: "Egypt") { _ in
-            self.handleSelection(country: "Egypt")
-        }
-        
-        let uaeAction = UIAction(title: "United Arab Emirates") { _ in
-            self.handleSelection(country: "United Arab Emirates")
-        }
-        
-        // إنشاء القائمة
-        let menu = UIMenu(title: "Choose your country", children: [saudiAction, egyptAction, uaeAction])
-        
-        // تعيين القائمة للزر
-        pullbutton.menu = menu
-        pullbutton.showsMenuAsPrimaryAction = true
-    }
-    
-    // MARK: - Handle Selection
-    func handleSelection(country: String) {
-        self.country = country
-        selectPhoneCode()
-        
-        // تحديث placeholder بناءً على الدولة
-        txtPhone.placeholder = phoneCode
-        
-        print("Selected Country: \(country), Phone Code: \(phoneCode)")
-    }
-    
-    // MARK: - Assign Country Data
-    func selectPhoneCode() {
-        switch country {
-        case "Saudi Arabia":
-            phoneCode = "+966 5 1234 5678"
-            countryImage.image = UIImage(named: "Saudi")
-            
-        case "Egypt":
-            phoneCode = "+20 11 1234 5678"
-            countryImage.image = UIImage(named: "Egypt")
-            
-        case "United Arab Emirates":
-            phoneCode = "+971 50 123 4567"
-            countryImage.image = UIImage(named: "Emirates")
-            
-        default:
-            phoneCode = ""
-            countryImage.image = nil
-        }
-    }
-    
-    
     
     @IBAction func doneButton(_ sender: Any) {
         resetPlaceholdersAndBorders()
@@ -122,7 +58,31 @@ class OTPVC: UIViewController {
         }
         if hasEmptyField { return }
 
-        print("OTP is sent")
+        let email = (txtPhone.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let otp = txtOtp.text ?? ""
+
+        api.verifyResetCode(email: email, code: otp) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    print("✅ Code verified successfully: \(message)")
+                    
+                    // بعد ما الكود يتحقق بنجاح، تقدر تفتح شاشة تغيير الباسورد مثلاً
+//                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//                    if let resetVC = storyboard.instantiateViewController(withIdentifier: "ResetPasswordVC") as? ResetPasswordVC {
+//                        resetVC.modalPresentationStyle = .fullScreen
+//                        self.present(resetVC, animated: true)
+//                    }
+                    
+                case .failure(let error):
+                    print("❌ Verification failed: \(error.localizedDescription)")
+                    
+                    let alert = UIAlertController(title: "Error", message: "Invalid OTP. Please try again.", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    self.present(alert, animated: true)
+                }
+            }
+        }
     }
     
     
@@ -130,6 +90,10 @@ class OTPVC: UIViewController {
     @IBAction func backButton(_ sender: Any) {
         dismiss(animated: true)
     }
+    
+    @IBAction func reSendButton(_ sender: Any) {
+    }
+    
 }
 
 extension OTPVC: UITextFieldDelegate {
