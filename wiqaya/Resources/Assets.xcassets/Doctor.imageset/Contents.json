@@ -1,19 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "c74879638ce5352e8981f8209ea000dda5c60715.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "c74879638ce5352e8981f8209ea000dda5c60715@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "c74879638ce5352e8981f8209ea000dda5c60715@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "Frame 4.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {

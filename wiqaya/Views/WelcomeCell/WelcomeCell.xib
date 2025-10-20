@@ -27,16 +27,16 @@
                                 <rect key="frame" x="0.0" y="190.33333333333337" width="300" height="209.66666666666663"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1ni-Re-d0Y">
-                                        <rect key="frame" x="0.0" y="83.333333333333343" width="300" height="43.333333333333343"/>
+                                        <rect key="frame" x="0.0" y="66.666666666666657" width="300" height="76.666666666666657"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="222" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aup-wj-oVl">
-                                                <rect key="frame" x="134.33333333333334" y="0.0" width="31.333333333333343" height="21.666666666666668"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                <rect key="frame" x="120.33333333333333" y="0.0" width="59.333333333333329" height="38.333333333333336"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="333" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zEv-X2-DwN">
-                                                <rect key="frame" x="133.66666666666666" y="21.666666666666629" width="32.666666666666657" height="21.666666666666671"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.65000000000000002" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="333" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zEv-X2-DwN">
+                                                <rect key="frame" x="133.66666666666666" y="38.333333333333314" width="32.666666666666657" height="38.333333333333343"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <nil key="highlightedColor"/>

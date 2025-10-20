@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3B01DB372EA5960F00607008 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3B01DB362EA5960F00607008 /* IQKeyboardManagerSwift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		3BD65A7A2EA235D100D8CA71 /* wiqaya.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wiqaya.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B01DB372EA5960F00607008 /* IQKeyboardManagerSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +83,7 @@
 			);
 			name = wiqaya;
 			packageProductDependencies = (
+				3B01DB362EA5960F00607008 /* IQKeyboardManagerSwift */,
 			);
 			productName = wiqaya;
 			productReference = 3BD65A7A2EA235D100D8CA71 /* wiqaya.app */;
@@ -107,6 +113,9 @@
 			);
 			mainGroup = 3BD65A712EA235D100D8CA71;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				3B01DB352EA5960F00607008 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3BD65A7B2EA235D100D8CA71 /* Products */;
 			projectDirPath = "";
@@ -335,6 +344,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3B01DB352EA5960F00607008 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3B01DB362EA5960F00607008 /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3B01DB352EA5960F00607008 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3BD65A722EA235D100D8CA71 /* Project object */;
 }

@@ -1,19 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "Property 1=Variant5.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "Property 1=Variant5@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "Property 1=Variant5@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "image4.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {
