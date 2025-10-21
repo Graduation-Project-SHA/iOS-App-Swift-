@@ -2,7 +2,7 @@ import UIKit
 
 class APIService {
     
-    let base = "https://3s4rmd3r-3000.uks1.devtunnels.ms"
+    let base = "https://hello-pix-members-headset.trycloudflare.com"
     
     // MARK: - Sign Up
     func signUpUser(
