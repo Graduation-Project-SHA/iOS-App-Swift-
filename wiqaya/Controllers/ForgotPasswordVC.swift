@@ -73,6 +73,8 @@ class ForgotPasswordVC: UIViewController {
                     alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
+                            otpVC.email = self.textEmail.text ?? ""
+//                            otpVC.VC = false
                             otpVC.modalPresentationStyle = .fullScreen
                             otpVC.modalTransitionStyle = .crossDissolve
                             self.present(otpVC, animated: true)

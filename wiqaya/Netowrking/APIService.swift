@@ -2,18 +2,21 @@ import UIKit
 
 class APIService {
     
+    let base = "https://3s4rmd3r-3000.uks1.devtunnels.ms"
+    
     // MARK: - Sign Up
     func signUpUser(
         email: String,
         password: String,
         name: String,
+        phone: String,
         dob: String,
         gender: String,
         address: String,
         role: String,
         completion: @escaping (Result<RegisterResponse, Error>) -> Void
     ) {
-        guard let url = URL(string: "https://wekaya.onrender.com/auth/sign-up") else { return }
+        guard let url = URL(string: "\(base)/auth/sign-up") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -23,6 +26,7 @@ class APIService {
             "email": email,
             "password": password,
             "name": name,
+            "phone": phone,
             "dob": dob,
             "gender": gender,
             "address": address,
@@ -71,7 +75,7 @@ class APIService {
         password: String,
         completion: @escaping (Result<LoginResponse, Error>) -> Void
     ) {
-        guard let url = URL(string: "https://wekaya.onrender.com/auth/local-login") else { return }
+        guard let url = URL(string: "\(base)/auth/local-login") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -101,7 +105,7 @@ class APIService {
         }.resume()
     }
     func requestPasswordReset(email: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let url = URL(string: "https://wekaya.onrender.com/auth/request-password-reset") else { return }
+        guard let url = URL(string: "\(base)/auth/request-password-reset") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -135,7 +139,7 @@ class APIService {
     
     // MARK: - Verify Reset Code
     func verifyResetCode(email: String, code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let url = URL(string: "https://wekaya.onrender.com/auth/verify-reset-code") else { return }
+        guard let url = URL(string: "\(base)/auth/verify-reset-code") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -152,36 +156,44 @@ class APIService {
             }
             guard let data = data else { return }
             
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print("📩 Raw Response (Verify Code):\n\(jsonString)")
-            }
-            
-            if let message = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let msg = message["message"] as? String {
-                completion(.success(msg))
-            } else {
-                completion(.success("Verification successful."))
+            do {
+                let decoded = try JSONDecoder().decode(VerifyCodeResponse.self, from: data)
+                if let token = decoded.resetToken {
+                    print("🔑 resetToken: \(token)")
+                    completion(.success(token)) // نرجع التوكن
+                } else {
+                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Token not found."])))
+                }
+            } catch {
+                completion(.failure(error))
             }
         }.resume()
     }
-    
+
     
     // MARK: - Reset Password
     func resetPassword(resetToken: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let url = URL(string: "https://wekaya.onrender.com/auth/reset-password") else { return }
+        guard let url = URL(string: "\(base)/auth/reset-password") else { return }
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        let body = [
+        // ✅ القيم اللي السيرفر محتاجها في الـ body
+        let body: [String: Any] = [
             "resetToken": resetToken,
             "password": newPassword
         ]
         
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: body) else { return }
+        // ✅ نحولها لـ JSON
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: body) else {
+            print("❌ Failed to serialize JSON body.")
+            return
+        }
+        
         request.httpBody = jsonData
         
+        // ✅ نبدأ الطلب
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 completion(.failure(error))
@@ -189,16 +201,19 @@ class APIService {
             }
             guard let data = data else { return }
             
+            // 📩 طباعة الرد الخام للمراجعة
             if let jsonString = String(data: data, encoding: .utf8) {
                 print("📩 Raw Response (Reset Password):\n\(jsonString)")
             }
             
-            if let message = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-               let msg = message["message"] as? String {
+            // ✅ نحاول نفك JSON ونستخرج الرسالة
+            if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               let msg = json["message"] as? String {
                 completion(.success(msg))
             } else {
                 completion(.success("Password reset successfully."))
             }
+            
         }.resume()
     }
 }

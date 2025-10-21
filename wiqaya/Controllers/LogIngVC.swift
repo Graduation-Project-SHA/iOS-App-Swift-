@@ -13,9 +13,8 @@ class LogIngVC: UIViewController {
     var country: String = ""
     var phoneCode: String = ""
     var myDate : String = ""
-    var isDoctor: String = "User"
+    var isDoctor: String = "Patient"
     var gender: String = ""
-    
     let api = APIService()
 
 
@@ -693,6 +692,7 @@ class LogIngVC: UIViewController {
             let password = txtPassRegister.text ?? ""
             let name = "\(txtFirstName.text ?? "") \(txtLastName.text ?? "")"
             let dob = myDate
+            let phone = txtPhoneRegister.text ?? ""
             let gender = gender
             let address = country
             let role = isDoctor
@@ -701,6 +701,7 @@ class LogIngVC: UIViewController {
                 email: email,
                 password: password,
                 name: name,
+                phone: phone,
                 dob: dob,
                 gender: gender,
                 address: address,
@@ -713,13 +714,20 @@ class LogIngVC: UIViewController {
                         print("👤 Created user: \(response.data.name), role: \(response.data.role)")
                         
                         // الانتقال بعد النجاح
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
-                            otpVC.modalPresentationStyle = .fullScreen
-                            otpVC.modalTransitionStyle = .crossDissolve
-                            self.present(otpVC, animated: true)
-                        }
                         
+                        self.myScrollView.isHidden = true
+                        self.logInView.isHidden = false
+                        
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        if let resetVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
+                            resetVC.titlelbl = "مرحباً \(self.txtFirstName.text ?? "")"
+                            resetVC.suptitlelbl = "لقد انشأت حسابك بنجاح"
+                            resetVC.msglbl = "قم بتسجيل الدخول في الخطوة التالية وأبدا بملئ بياناتك فى ملفك الشخصي"
+                            resetVC.modalPresentationStyle = .fullScreen
+                            resetVC.modalTransitionStyle = .crossDissolve
+                            self.present(resetVC, animated: true)
+                        }
+
                     case .failure(let error):
                         self.errorRegisterMsg.isHidden = false
                         self.errorRegisterMsg.text = error.localizedDescription

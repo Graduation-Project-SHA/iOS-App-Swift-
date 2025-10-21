@@ -59,7 +59,8 @@ struct PasswordResetRequestResponse: Codable {
 
 /// ✅ عند التحقق من الكود (verify-reset-code)
 struct VerifyCodeResponse: Codable {
-    let message: String
+    let resetToken: String?
+    let message: String?
 }
 
 /// ✅ عند إعادة تعيين كلمة المرور فعليًا (reset-password)

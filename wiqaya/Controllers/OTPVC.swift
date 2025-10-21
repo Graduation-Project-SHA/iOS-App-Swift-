@@ -7,30 +7,34 @@
 
 import UIKit
 import IQKeyboardManagerSwift
+
 class OTPVC: UIViewController {
     
     // MARK: - Variables
     var country: String = ""
     var phoneCode: String = ""
     let api = APIService()
-
+    var email: String = ""
+    var name: String = ""
+    var countdownTimer: Timer?
+    var remainingSeconds = 30
+    
     // MARK: - Outlets
     @IBOutlet weak var txtPhone: UITextField!
-    
     @IBOutlet weak var phoneView: UIView!
     @IBOutlet weak var mainPhoneNumber: UILabel!
-
     @IBOutlet weak var mainOtpNumper: UILabel!
-    
+    @IBOutlet weak var lblCounter: UILabel!
     @IBOutlet weak var txtOtp: UITextField!
-    
     @IBOutlet weak var reSend: UIButton!
+    @IBOutlet weak var lblReSend: UILabel!
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         IQKeyboardManager.shared.disabledDistanceHandlingClasses = [OTPVC.self]
-
+        txtPhone.text = email
+        
         [txtPhone].forEach {
             $0?.delegate = self
             $0?.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
@@ -39,11 +43,12 @@ class OTPVC: UIViewController {
             $0?.layer.borderColor = UIColor.systemGray4.cgColor
         }
         phoneView.isHidden = true
-
         
-        
+        // ✅ أول ما الصفحة تفتح، يبدأ العد التنازلي لإعادة الإرسال
+        showResendUIAndStartCountdown()
     }
     
+    // MARK: - Done Button Action
     @IBAction func doneButton(_ sender: Any) {
         resetPlaceholdersAndBorders()
         
@@ -57,43 +62,96 @@ class OTPVC: UIViewController {
             hasEmptyField = true
         }
         if hasEmptyField { return }
-
+        
         let email = (txtPhone.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let otp = txtOtp.text ?? ""
-
+        
         api.verifyResetCode(email: email, code: otp) { result in
             DispatchQueue.main.async {
                 switch result {
-                case .success(let message):
-                    print("✅ Code verified successfully: \(message)")
+                case .success(let resetToken):
+                    print("✅ Code verified successfully. Token: \(resetToken)")
                     
-                    // بعد ما الكود يتحقق بنجاح، تقدر تفتح شاشة تغيير الباسورد مثلاً
-//                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-//                    if let resetVC = storyboard.instantiateViewController(withIdentifier: "ResetPasswordVC") as? ResetPasswordVC {
-//                        resetVC.modalPresentationStyle = .fullScreen
-//                        self.present(resetVC, animated: true)
-//                    }
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    if let resetVC = storyboard.instantiateViewController(withIdentifier: "ResetPassword") as? resetPassVC {
+                        resetVC.resetToken = resetToken
+                        resetVC.modalPresentationStyle = .fullScreen
+                        resetVC.modalTransitionStyle = .crossDissolve
+                        self.present(resetVC, animated: true)
+                    }
                     
                 case .failure(let error):
                     print("❌ Verification failed: \(error.localizedDescription)")
-                    
-                    let alert = UIAlertController(title: "Error", message: "Invalid OTP. Please try again.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
-                    self.present(alert, animated: true)
                 }
             }
         }
     }
     
+    // MARK: - إعادة إرسال الكود
+    @IBAction func reSendButton(_ sender: Any) {
+        print("🔄 إعادة إرسال الكود...")
+        
+        // ✅ إعادة إظهار عناصر العدّ والزرار
+        lblReSend.isHidden = false
+        lblCounter.isHidden = false
+        reSend.isHidden = false
+        
+        // ✅ تعطيل الزر مؤقتًا
+        reSend.isEnabled = false
+        reSend.setTitleColor(.systemGray, for: .normal)
+        
+        // ✅ إعادة تعيين العداد وتشغيله من جديد
+        countdownTimer?.invalidate()
+        remainingSeconds = 30
+        startCountdown()
+        
+        // ✅ استدعاء API لإرسال كود جديد
+        api.requestPasswordReset(email: email) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    print("✅ Password reset request sent successfully: \(message)")
+                case .failure(let error):
+                    print("❌ Failed to send password reset request: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
     
-    // MARK: - Back Button Action
+    // MARK: - Countdown Logic
+    private func showResendUIAndStartCountdown() {
+        lblReSend.isHidden = false
+        reSend.isHidden = false
+        lblCounter.isHidden = false
+        
+        reSend.isEnabled = false
+        reSend.setTitleColor(.systemGray, for: .normal)
+        
+        remainingSeconds = 30
+        startCountdown()
+    }
+    
+    private func startCountdown() {
+        countdownTimer?.invalidate()
+        lblCounter.text = "إعادة إرسال خلال \(remainingSeconds)ث"
+        
+        countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            self.remainingSeconds -= 1
+            self.lblCounter.text = "إعادة إرسال خلال \(self.remainingSeconds)ث"
+            
+            if self.remainingSeconds <= 0 {
+                timer.invalidate()
+                self.lblCounter.isHidden = true
+                self.reSend.isEnabled = true
+                self.reSend.setTitleColor(.systemBlue, for: .normal)
+            }
+        }
+    }
+    
+    // MARK: - Back Button
     @IBAction func backButton(_ sender: Any) {
         dismiss(animated: true)
     }
-    
-    @IBAction func reSendButton(_ sender: Any) {
-    }
-    
 }
 
 extension OTPVC: UITextFieldDelegate {
