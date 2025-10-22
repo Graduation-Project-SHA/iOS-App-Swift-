@@ -6,6 +6,12 @@
 //
 import Foundation
 
+// MARK: - Error Response
+struct ErrorResponse: Codable, Error {
+    var message: [String]?
+    var statusCode: Int?
+}
+
 // MARK: - Register Response
 struct RegisterResponse: Codable {
     let message: String

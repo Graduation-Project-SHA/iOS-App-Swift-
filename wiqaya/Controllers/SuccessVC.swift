@@ -22,6 +22,7 @@ class SuccessVC: UIViewController {
     
     @IBOutlet weak var msg: UILabel!
     
+    @IBOutlet weak var done: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()

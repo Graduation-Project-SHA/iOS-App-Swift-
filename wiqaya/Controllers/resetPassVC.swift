@@ -157,17 +157,18 @@ class resetPassVC: UIViewController {
         if !hasStrongMix { passError = true }
         
         
-        // الشرط 4: الرموز غير المسموح بها
-        let unallowedCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+=[]{}|\\:;\"'<>,.?/~`")
-        let containsUnallowed = password.rangeOfCharacter(from: unallowedCharacters) != nil
-        lblUnallowedSymbols.textColor = containsUnallowed ? red : green
-        markUnallowedSymbols.tintColor = containsUnallowed ? red : green
-        markUnallowedSymbols.image = containsUnallowed
-        ? UIImage(systemName: "xmark.circle.fill")
-        : UIImage(systemName: "checkmark.circle.fill")
+        // الشرط 4: يجب أن تحتوي كلمة المرور على رمز خاص
+        let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+=[]{}|\\:;\"'<>,.?/~`")
+        let containsSpecial = password.rangeOfCharacter(from: specialCharacters) != nil
         
-        if containsUnallowed { passError = true }
+        lblUnallowedSymbols.textColor = containsSpecial ? green : red
+        markUnallowedSymbols.tintColor = containsSpecial ? green : red
+        markUnallowedSymbols.image = containsSpecial
+        ? UIImage(systemName: "checkmark.circle.fill")
+        : UIImage(systemName: "xmark.circle.fill")
         
+        if !containsSpecial { passError = true }
+
     }
     
     @IBAction func resetPassButton(_ sender: Any) {
@@ -216,8 +217,8 @@ class resetPassVC: UIViewController {
                     case .failure(let error):
                         // 🟥 لو حصل خطأ من السيرفر
                         self.errorRegisterMsg.isHidden = false
-                        self.errorRegisterMsg.text = error.localizedDescription
-                        print("❌ Reset password error: \(error.localizedDescription)")
+                        self.errorRegisterMsg.text = error.message?.first ?? "Something went wrong."
+                        print("❌ Reset password error: \(error.message?.first ?? "")")
                     }
                 }
             }

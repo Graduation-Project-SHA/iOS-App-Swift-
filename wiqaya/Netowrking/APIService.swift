@@ -2,7 +2,12 @@ import UIKit
 
 class APIService {
     
-    let base = "https://hello-pix-members-headset.trycloudflare.com"
+    // Url
+    let base = "https://dispatched-annual-alot-camp.trycloudflare.com"
+    
+    // Errors
+    let internetError = ErrorResponse(message: ["Internet error, please try again!"])
+    let generalError = ErrorResponse(message: ["Something went wrong please try again!"])
     
     // MARK: - Sign Up
     func signUpUser(
@@ -172,7 +177,7 @@ class APIService {
 
     
     // MARK: - Reset Password
-    func resetPassword(resetToken: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func resetPassword(resetToken: String, newPassword: String, completion: @escaping (Result<String, ErrorResponse>) -> Void) {
         guard let url = URL(string: "\(base)/auth/reset-password") else { return }
         
         var request = URLRequest(url: url)
@@ -196,7 +201,7 @@ class APIService {
         // ✅ نبدأ الطلب
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                completion(.failure(error))
+                completion(.failure(self.internetError))
                 return
             }
             guard let data = data else { return }
@@ -210,10 +215,16 @@ class APIService {
             if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                let msg = json["message"] as? String {
                 completion(.success(msg))
+            } else if let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data) {
+                completion(.failure(errorResponse))
             } else {
-                completion(.success("Password reset successfully."))
+                completion(.failure(self.generalError))
             }
             
         }.resume()
     }
 }
+
+
+
+

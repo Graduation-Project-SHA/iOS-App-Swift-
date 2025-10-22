@@ -1401,7 +1401,7 @@
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3rC-Te-xdL">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3rC-Te-xdL">
                                 <rect key="frame" x="24" y="367.33333333333331" width="344" height="24"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="24" id="vBa-vm-C0h"/>
@@ -2744,7 +2744,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fkX-Da-ooh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4085" y="1344"/>
+            <point key="canvasLocation" x="4084.7328244274809" y="1343.661971830986"/>
         </scene>
         <!--SuccessVC-->
         <scene sceneID="Kxv-kr-iNU">
@@ -2835,6 +2835,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="done" destination="wGJ-bO-XWh" id="9gr-ub-z77"/>
                         <outlet property="msg" destination="cc8-Tg-IF9" id="qcJ-gr-G5n"/>
                         <outlet property="suptitle" destination="GF6-IE-OHj" id="8Wk-Ri-6kf"/>
                         <outlet property="title1" destination="cAS-9I-enu" id="a7M-MW-mp7"/>

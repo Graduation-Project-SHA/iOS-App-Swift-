@@ -10,11 +10,16 @@ import UIKit
 class LogIngVC: UIViewController {
     
     var iAmDoctor: Bool = false
+    var isRememberMeSelected = false
     var country: String = ""
     var phoneCode: String = ""
     var myDate : String = ""
     var isDoctor: String = "Patient"
     var gender: String = ""
+    var userName: String = ""
+    var key : String = "+20"
+    var formatphone : String = ""
+    
     let api = APIService()
 
 
@@ -154,10 +159,27 @@ class LogIngVC: UIViewController {
     
     
     let gradient = GradientManager()
+    let green = UIColor(named: "AppGreen") ?? .systemGreen
+    let red = UIColor(named: "AppRed") ?? .systemRed
 
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        checkIfUserAlreadyLoggedIn()
+        if let accessToken = UserDefaults.standard.string(forKey: "accessToken"),
+           !accessToken.isEmpty {
+            
+            // ✅ تحقق هل التوكن لسه صالح
+            if isTokenValid(accessToken) {
+                print("🔐 User already logged in with valid token.")
+                goToHomeScreen()
+            } else {
+                print("⚠️ Token expired — user must log in again.")
+                // نحذف التوكن القديم
+                UserDefaults.standard.removeObject(forKey: "accessToken")
+                UserDefaults.standard.removeObject(forKey: "refreshToken")
+            }
+        }
+
         myScrollView.isHidden = true
         CheckMarkForEmail.isHidden = true
         authView.layer.cornerRadius = 20
@@ -243,18 +265,86 @@ class LogIngVC: UIViewController {
         
         txtPassRegister.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
         txtConfirmPassRegister.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
+        txtEmailRegister.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
 
         iAmDoctor = false
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         doctor.backgroundColor = .clear
 
     }
-    
+    func isTokenValid(_ token: String) -> Bool {
+        // التوكن بيكون 3 أجزاء مفصولة بـ "."
+        let segments = token.split(separator: ".")
+        guard segments.count == 3 else { return false }
+        
+        // الجزء الأوسط هو الـ payload
+        let payloadSegment = segments[1]
+        
+        // نحول الـ Base64 إلى Data
+        var base64 = String(payloadSegment)
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        
+        // تكملة padding لو ناقص
+        while base64.count % 4 != 0 {
+            base64.append("=")
+        }
+        
+        guard let payloadData = Data(base64Encoded: base64),
+              let json = try? JSONSerialization.jsonObject(with: payloadData) as? [String: Any],
+              let exp = json["exp"] as? TimeInterval else {
+            return false
+        }
+        
+        // نحسب الوقت الحالي
+        let expirationDate = Date(timeIntervalSince1970: exp)
+        return Date() < expirationDate
+    }
+
     var passError : Bool = false
     @objc func textFieldsChanged(_ sender: UITextField) {
         validatePassword()
+        emailValed()
     }
         
+    
+    private func emailValed() {
+        passError = false
+        guard let email = txtEmailRegister.text?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) else {
+            CheckMarkForEmail.isHidden = true
+            return
+        }
+        
+        // ✅ صيغة الإيميل الصحيحة باستخدام regex
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let isFormatValid = NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: email)
+        
+        // 🟢 قائمة النطاقات المشهورة
+        let allowedDomains = [
+            "@gmail.com",
+            "@outlook.com",
+            "@yahoo.com",
+            "@icloud.com",
+            "@hotmail.com"
+        ]
+        
+        
+        let hasValidDomain = allowedDomains.contains { email.contains($0) }
+        let isValid = isFormatValid && hasValidDomain
+        
+        
+        CheckMarkForEmail.isHidden = false
+        if isValid {
+            CheckMarkForEmail.image = UIImage(systemName: "checkmark.circle.fill")
+            CheckMarkForEmail.tintColor = .appGreen
+        } else {
+            CheckMarkForEmail.image = UIImage(systemName: "xmark.circle.fill")
+            CheckMarkForEmail.tintColor = .appRed
+            passError = true
+        }
+    }
+
+    
     private func validatePassword() {
         passError = false
 
@@ -262,8 +352,6 @@ class LogIngVC: UIViewController {
         let confirmPassword = txtConfirmPassRegister.text ?? ""
         
         // الألوان
-        let green = UIColor(named: "AppGreen") ?? .systemGreen
-        let red = UIColor(named: "AppRed") ?? .systemRed
         
         
         // الشرط 1: تطابق كلمتي المرور
@@ -308,17 +396,18 @@ class LogIngVC: UIViewController {
         if !hasStrongMix { passError = true }
 
         
-        // الشرط 4: الرموز غير المسموح بها
-        let unallowedCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+=[]{}|\\:;\"'<>,.?/~`")
-        let containsUnallowed = password.rangeOfCharacter(from: unallowedCharacters) != nil
-        lblUnallowedSymbols.textColor = containsUnallowed ? red : green
-        markUnallowedSymbols.tintColor = containsUnallowed ? red : green
-        markUnallowedSymbols.image = containsUnallowed
-        ? UIImage(systemName: "xmark.circle.fill")
-        : UIImage(systemName: "checkmark.circle.fill")
+        // الشرط 4: يجب أن تحتوي كلمة المرور على رمز خاص
+        let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+=[]{}|\\:;\"'<>,.?/~`")
+        let containsSpecial = password.rangeOfCharacter(from: specialCharacters) != nil
         
-        if containsUnallowed { passError = true }
+        lblUnallowedSymbols.textColor = containsSpecial ? green : red
+        markUnallowedSymbols.tintColor = containsSpecial ? green : red
+        markUnallowedSymbols.image = containsSpecial
+        ? UIImage(systemName: "checkmark.circle.fill")
+        : UIImage(systemName: "xmark.circle.fill")
         
+        if !containsSpecial { passError = true }
+
     }
 
     
@@ -368,14 +457,19 @@ class LogIngVC: UIViewController {
         switch country {
         case "Saudi Arabia":
             phoneCode = "+966 5 1234 5678"
+            key = "+966"
             countryImage.image = UIImage(named: "Saudi")
             
         case "Egypt":
             phoneCode = "+20 11 1234 5678"
+            key = "+20"
+
             countryImage.image = UIImage(named: "Egypt")
             
         case "United Arab Emirates":
             phoneCode = "+971 50 123 4567"
+            key = "+971"
+
             countryImage.image = UIImage(named: "Emirates")
             
         default:
@@ -383,7 +477,26 @@ class LogIngVC: UIViewController {
             countryImage.image = nil
         }
     }
-    
+    func formatPhoneNumber(_ input: String) -> String{
+        var trimmed = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // لو الرقم بيبدأ بـ "+" خلاص جاهز
+        if trimmed.hasPrefix("+") {
+            formatphone = trimmed
+            return trimmed
+        }
+        
+        // لو الرقم بيبدأ بـ "0" نحذفها
+        if trimmed.hasPrefix("0") {
+            trimmed.removeFirst()
+        }
+        
+        // نركب الرقم الكامل بمفتاح الدولة
+        formatphone = key + trimmed
+        print("📱 رقم الهاتف النهائي: \(formatphone)")
+        return formatphone
+    }
+
 
     
     
@@ -466,17 +579,15 @@ class LogIngVC: UIViewController {
 
     }
     @IBAction func rememberMeButton(_ sender: UIButton) {
-        sender.isSelected.toggle() // تغيّر الحالة من selected إلى غير selected والعكس
+        sender.isSelected.toggle()
+        isRememberMeSelected = sender.isSelected // ✅ نخزن الحالة
         
         if sender.isSelected {
-            // الحالة مفعّلة
             sender.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-            print("selected")
+            print("✅ Remember Me selected")
         } else {
-            // الحالة غير مفعّلة
             sender.setImage(UIImage(systemName: "square"), for: .normal)
-            print("non-selected")
-
+            print("🔲 Remember Me unselected")
         }
 
     }
@@ -616,22 +727,79 @@ class LogIngVC: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
-                    // ✅ طباعة البيانات القادمة من السيرفر
                     self.errorMsg.isHidden = false
                     self.errorMsg.text = "Login successful"
-                    self.errorMsg.textColor = .systemGreen
-
+                    self.errorMsg.textColor = .appGreen
+                    
                     print("✅ Login successful!")
                     print("🔑 Access token: \(response.tokens.accessToken)")
-                    print("👤 User name: \(response.date.payload.name)")
+                    print("👤 name: \(response.date.payload.name)")
                     print("📧 Email: \(response.date.payload.email)")
                     print("🧩 Role: \(response.date.payload.role)")
+                    
+                    // نحفظ البيانات فقط لو Remember Me مفعّلة
+                    if self.isRememberMeSelected {
+                        let defaults = UserDefaults.standard
+                        defaults.set(response.tokens.accessToken, forKey: "accessToken")
+                        defaults.set(response.tokens.refreshToken, forKey: "refreshToken")
+                        defaults.set(response.date.payload.name, forKey: "name")
+                        self.userName = response.date.payload.name
+
+                        defaults.set(response.date.payload.email, forKey: "userEmail")
+                        defaults.set(response.date.payload.role, forKey: "userRole")
+
+                        print("💾 Tokens saved (Remember Me is ON)")
+                    } else {
+                        print("Tokens not saved (Remember Me is OFF)")
+                    }
+                    
+                    self.goToHomeScreen()
+                    
                 case .failure(let error):
                     self.errorMsg.isHidden = false
                     self.errorMsg.text = error.localizedDescription
+                    self.errorMsg.textColor = self.red
+                    
                     print("❌ Login error: \(error.localizedDescription)")
                 }
             }
+        }
+    }
+    private func goToHomeScreen() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let homeVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
+            homeVC.titlelbl = "مرحباً \(userName)"
+            homeVC.suptitlelbl = "لقد قمت بتسجيل الدخول مسبقاً"
+            homeVC.msglbl = ""
+            homeVC.loadViewIfNeeded() // ضروري قبل التعديل على الـ outlets
+            homeVC.done.isHidden = true
+            homeVC.modalPresentationStyle = .fullScreen
+            homeVC.modalTransitionStyle = .crossDissolve
+            self.present(homeVC, animated: true)
+        }
+    }
+    private func checkIfUserAlreadyLoggedIn() {
+        let defaults = UserDefaults.standard
+        
+        if let accessToken = defaults.string(forKey: "accessToken"),
+           let refreshToken = defaults.string(forKey: "refreshToken"),
+           let name = defaults.string(forKey: "name"),
+           let email = defaults.string(forKey: "userEmail") {
+            
+            print("""
+         User already logged in:
+        Name: \(name)
+        Email: \(email)
+        AccessToken: \(accessToken.prefix(20))...
+        RefreshToken: \(refreshToken.prefix(20))...
+        """)
+            
+            //  المستخدم كان مفعل Remember Me → دخله مباشرة
+            self.userName = name //  أضف هذا السطر
+
+            goToHomeScreen()
+        } else {
+            print("No saved session found, stay on login screen")
         }
     }
 
@@ -682,7 +850,7 @@ class LogIngVC: UIViewController {
         if hasEmptyField { return }
         
         guard !myDate.isEmpty else {
-            print("⚠️ من فضلك اختر تاريخ الميلاد أولاً")
+            print("من فضلك اختر تاريخ الميلاد أولاً")
             return
         }
 
@@ -692,7 +860,7 @@ class LogIngVC: UIViewController {
             let password = txtPassRegister.text ?? ""
             let name = "\(txtFirstName.text ?? "") \(txtLastName.text ?? "")"
             let dob = myDate
-            let phone = txtPhoneRegister.text ?? ""
+            let phone = formatphone
             let gender = gender
             let address = country
             let role = isDoctor
@@ -729,32 +897,62 @@ class LogIngVC: UIViewController {
                         }
 
                     case .failure(let error):
+                        self.errorRegisterMsg.textColor = .appRed
                         self.errorRegisterMsg.isHidden = false
                         self.errorRegisterMsg.text = error.localizedDescription
+                        
                         print("❌ Sign up error: \(error.localizedDescription)")
                     }
                 }
             }
         }else {
-            // 🟥 اهتز فقط الشروط اللي فيها أخطاء (لونها أحمر)
+            //  اهتز فقط الشروط اللي فيها أخطاء (لونها أحمر)
             
-            if lblPasswordMatches.textColor == .systemRed || markPasswordMatches.tintColor == .systemRed {
-                shake(textField: txtConfirmPassRegister)
+            if CheckMarkForEmail.tintColor == .appRed {
+                shake(txtEmailRegister)
+                self.errorRegisterMsg.textColor = .appRed
+                self.errorRegisterMsg.isHidden = false
+                errorRegisterMsg.text = "البريد الإلكتروني غير صحيح"
+                
+                
+            }
+            if lblPasswordMatches.textColor == .appRed || markPasswordMatches.tintColor == .appRed {
+                shake(txtConfirmPassRegister)
+                self.errorRegisterMsg.textColor = .appRed
+                self.errorRegisterMsg.isHidden = false
+
+                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+
             }
             
-            if lblPassword8letters.textColor == .systemRed || markPassword8letters.tintColor == .systemRed {
-                shake(textField: txtPassRegister)
+            if lblPassword8letters.textColor == .appRed || markPassword8letters.tintColor == .appRed {
+                shake(txtPassRegister)
+                self.errorRegisterMsg.textColor = .appRed
+                self.errorRegisterMsg.isHidden = false
+
+                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+
             }
             
-            if lbllblPasswordHasNumbers.textColor == .systemRed || marklblPasswordHasNumbers.tintColor == .systemRed {
-                shake(textField: txtPassRegister)
+            if lbllblPasswordHasNumbers.textColor == .appRed || marklblPasswordHasNumbers.tintColor == .appRed {
+                shake(txtPassRegister)
+                self.errorRegisterMsg.textColor = .appRed
+                self.errorRegisterMsg.isHidden = false
+
+                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+
             }
             
-            if lblUnallowedSymbols.textColor == .systemRed || markUnallowedSymbols.tintColor == .systemRed {
-                shake(textField: txtPassRegister)
+            if lblUnallowedSymbols.textColor == .appRed || markUnallowedSymbols.tintColor == .appRed {
+                shake(txtPassRegister)
+                self.errorRegisterMsg.textColor = .appRed
+                self.errorRegisterMsg.isHidden = false
+
+                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+
             }
             
-            // 🔔 ممكن تضيف اهتزاز بسيط للشاشة كتنبيه عام (اختياري)
+            //  ممكن تضيف اهتزاز بسيط للشاشة كتنبيه عام (اختياري)
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.error)
         }
@@ -832,6 +1030,12 @@ extension LogIngVC: UITextFieldDelegate {
     @objc func textFieldDidChange(_ textField: UITextField) {
         textField.layer.borderColor = UIColor.systemGray4.cgColor
     }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == txtPhoneRegister { // تأكد إن ده حقل الهاتف
+            textField.text = formatPhoneNumber(textField.text ?? "")
+        }
+    }
+
 }
 
 // MARK: - Helper Methods
@@ -842,7 +1046,7 @@ extension LogIngVC {
             attributes: [.foregroundColor: UIColor.red]
         )
         textField.layer.borderColor = UIColor.red.cgColor
-        shake(textField: textField)
+        shake(textField)
     }
     
     private func resetPlaceholdersAndBorders() {
@@ -859,19 +1063,29 @@ extension LogIngVC {
         }
     }
     
-    private func shake(textField: UITextField) {
+//    private func shake(textField: UITextField) {
+//        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+//        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+//        animation.duration = 0.4
+//        animation.values = [-10, 10, -8, 8, -5, 5, 0]
+//        textField.layer.add(animation, forKey: "shake")
+//    }
+    
+    private func shake<T>(_ view: T) {
+        guard let uiView = view as? UIView else { return }
+        
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         animation.duration = 0.4
-        animation.values = [-10, 10, -8, 8, -5, 5, 0]
-        textField.layer.add(animation, forKey: "shake")
+        
+        // Smooth decreasing amplitude pattern
+        let amplitudes: [CGFloat] = [10, -10, 8, -8, 5, -5, 0]
+        animation.values = amplitudes
+        
+        // Avoid overlapping animations by removing old ones
+        uiView.layer.removeAnimation(forKey: "shake")
+        uiView.layer.add(animation, forKey: "shake")
     }
-    private func shake(view: UIView) {
-        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction(name: .linear)
-        animation.duration = 0.4
-        animation.values = [-10, 10, -8, 8, -5, 5, 0]
-        view.layer.add(animation, forKey: "shake")
-    }
+
 
 }
