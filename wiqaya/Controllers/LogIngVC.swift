@@ -10,6 +10,7 @@ import UIKit
 class LogIngVC: UIViewController {
     
     var iAmDoctor: Bool = false
+    var gend: Bool = false
     var isRememberMeSelected = false
     var country: String = ""
     var phoneCode: String = ""
@@ -25,6 +26,7 @@ class LogIngVC: UIViewController {
 
     // MARK: - Login as User and Doctor View
 
+    
     @IBOutlet weak var logo: UILabel!
     @IBOutlet weak var lblStartNow: UILabel!
     @IBOutlet weak var lblMarketing: UILabel!
@@ -164,21 +166,6 @@ class LogIngVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        checkIfUserAlreadyLoggedIn()
-        if let accessToken = UserDefaults.standard.string(forKey: "accessToken"),
-           !accessToken.isEmpty {
-            
-            // ✅ تحقق هل التوكن لسه صالح
-            if isTokenValid(accessToken) {
-                print("🔐 User already logged in with valid token.")
-                goToHomeScreen()
-            } else {
-                print("⚠️ Token expired — user must log in again.")
-                // نحذف التوكن القديم
-                UserDefaults.standard.removeObject(forKey: "accessToken")
-                UserDefaults.standard.removeObject(forKey: "refreshToken")
-            }
-        }
 
         myScrollView.isHidden = true
         CheckMarkForEmail.isHidden = true
@@ -270,8 +257,22 @@ class LogIngVC: UIViewController {
         iAmDoctor = false
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         doctor.backgroundColor = .clear
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        checkIfUserAlreadyLoggedIn()
 
     }
+
+    
+    
+    
+    
+    
+    
+    
+    
     func isTokenValid(_ token: String) -> Bool {
         // التوكن بيكون 3 أجزاء مفصولة بـ "."
         let segments = token.split(separator: ".")
@@ -301,7 +302,7 @@ class LogIngVC: UIViewController {
         return Date() < expirationDate
     }
 
-    var passError : Bool = false
+    var passError : Bool = true
     @objc func textFieldsChanged(_ sender: UITextField) {
         validatePassword()
         emailValed()
@@ -360,8 +361,8 @@ class LogIngVC: UIViewController {
             markPasswordMatches.tintColor = .systemGray3
         } else {
             let passwordsMatch = !password.isEmpty && (password == confirmPassword)
-            lblPasswordMatches.textColor = passwordsMatch ? green : red
-            markPasswordMatches.tintColor = passwordsMatch ? green : red
+            lblPasswordMatches.textColor = passwordsMatch ? .appGreen : .appRed
+            markPasswordMatches.tintColor = passwordsMatch ? .appGreen : .appRed
             markPasswordMatches.image = passwordsMatch
             ? UIImage(systemName: "checkmark.circle.fill")
             : UIImage(systemName: "xmark.circle.fill")
@@ -371,8 +372,8 @@ class LogIngVC: UIViewController {
         
         // الشرط 2: الطول لا يقل عن 8
         let has8Letters = password.count >= 8
-        lblPassword8letters.textColor = has8Letters ? green : red
-        markPassword8letters.tintColor = has8Letters ? green : red
+        lblPassword8letters.textColor = has8Letters ? .appGreen : .appRed
+        markPassword8letters.tintColor = has8Letters ? .appGreen : .appRed
         markPassword8letters.image = has8Letters
         ? UIImage(systemName: "checkmark.circle.fill")
         : UIImage(systemName: "xmark.circle.fill")
@@ -387,8 +388,8 @@ class LogIngVC: UIViewController {
         let hasLowercase = password.rangeOfCharacter(from: .lowercaseLetters) != nil
         let hasStrongMix = hasNumbers && hasUppercase && hasLowercase
         
-        lbllblPasswordHasNumbers.textColor = hasStrongMix ? green : red
-        marklblPasswordHasNumbers.tintColor = hasStrongMix ? green : red
+        lbllblPasswordHasNumbers.textColor = hasStrongMix ? .appGreen : .appRed
+        marklblPasswordHasNumbers.tintColor = hasStrongMix ? .appGreen : .appRed
         marklblPasswordHasNumbers.image = hasStrongMix
         ? UIImage(systemName: "checkmark.circle.fill")
         : UIImage(systemName: "xmark.circle.fill")
@@ -400,8 +401,8 @@ class LogIngVC: UIViewController {
         let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+=[]{}|\\:;\"'<>,.?/~`")
         let containsSpecial = password.rangeOfCharacter(from: specialCharacters) != nil
         
-        lblUnallowedSymbols.textColor = containsSpecial ? green : red
-        markUnallowedSymbols.tintColor = containsSpecial ? green : red
+        lblUnallowedSymbols.textColor = containsSpecial ? .appGreen : .appRed
+        markUnallowedSymbols.tintColor = containsSpecial ? .appGreen : .appRed
         markUnallowedSymbols.image = containsSpecial
         ? UIImage(systemName: "checkmark.circle.fill")
         : UIImage(systemName: "xmark.circle.fill")
@@ -545,6 +546,9 @@ class LogIngVC: UIViewController {
             print("🆕 إنشاء حساب")
             
             if iAmDoctor {
+                
+//                logInView.
+//                myScrollView.
                 logInView.isHidden = true
                 myScrollView.isHidden = true
 
@@ -594,6 +598,10 @@ class LogIngVC: UIViewController {
     
     
     @IBAction func menButton(_ sender: Any) {
+        
+        gend = true
+        passError = false
+
         gender = "MALE"
         print(gender)
         man.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
@@ -602,6 +610,9 @@ class LogIngVC: UIViewController {
     }
     
     @IBAction func womenButton(_ sender: Any) {
+        passError = false
+
+        gend = true
         gender = "FEMALE"
         print(gender)
         women.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
@@ -753,7 +764,7 @@ class LogIngVC: UIViewController {
                         print("Tokens not saved (Remember Me is OFF)")
                     }
                     
-                    self.goToHomeScreen()
+                    self.goToHomeScreen(titile: "مرحباً \(self.userName)", supTitle: "تم تسجيل دخولك بنجاح", msg: "")
                     
                 case .failure(let error):
                     self.errorMsg.isHidden = false
@@ -765,12 +776,12 @@ class LogIngVC: UIViewController {
             }
         }
     }
-    private func goToHomeScreen() {
+    private func goToHomeScreen(titile:String , supTitle:String , msg:String) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let homeVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
-            homeVC.titlelbl = "مرحباً \(userName)"
-            homeVC.suptitlelbl = "لقد قمت بتسجيل الدخول مسبقاً"
-            homeVC.msglbl = ""
+            homeVC.titlelbl = titile
+            homeVC.suptitlelbl = supTitle
+            homeVC.msglbl = msg
             homeVC.loadViewIfNeeded() // ضروري قبل التعديل على الـ outlets
             homeVC.done.isHidden = true
             homeVC.modalPresentationStyle = .fullScreen
@@ -782,24 +793,39 @@ class LogIngVC: UIViewController {
         let defaults = UserDefaults.standard
         
         if let accessToken = defaults.string(forKey: "accessToken"),
+           !accessToken.isEmpty,
            let refreshToken = defaults.string(forKey: "refreshToken"),
            let name = defaults.string(forKey: "name"),
            let email = defaults.string(forKey: "userEmail") {
             
-            print("""
-         User already logged in:
-        Name: \(name)
-        Email: \(email)
-        AccessToken: \(accessToken.prefix(20))...
-        RefreshToken: \(refreshToken.prefix(20))...
-        """)
+            self.userName = name
             
-            //  المستخدم كان مفعل Remember Me → دخله مباشرة
-            self.userName = name //  أضف هذا السطر
-
-            goToHomeScreen()
+            if isTokenValid(accessToken) {
+                print("🔐 User already logged in with valid token.")
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.goToHomeScreen(
+                        titile: "مرحباً \(name)",
+                        supTitle: "لقد قمت بتسجيل الدخول مسبقاً",
+                        msg: ""
+                    )
+                }
+            } else {
+                print("⚠️ Token expired — please log in again.")
+                defaults.removeObject(forKey: "accessToken")
+                defaults.removeObject(forKey: "refreshToken")
+                
+                let alert = UIAlertController(
+                    title: "انتهت الجلسة",
+                    message: "يرجى تسجيل الدخول مرة أخرى.",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "حسناً", style: .default))
+                self.present(alert, animated: true)
+            }
+            
         } else {
-            print("No saved session found, stay on login screen")
+            print("🚫 No saved session found, stay on login screen")
         }
     }
 
@@ -824,11 +850,11 @@ class LogIngVC: UIViewController {
         var hasEmptyField = false
         
         if txtFirstName.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
-            markAsEmpty(textField: txtFirstName, placeholder: "من فضلك ادخل اسمك الاول هنا..")
+            markAsEmpty(textField: txtFirstName, placeholder: "ادخل الاسم الاول")
             hasEmptyField = true
         }
         if txtLastName.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
-            markAsEmpty(textField: txtLastName, placeholder: "من فضلك ادخل اسمك الاخير هنا..")
+            markAsEmpty(textField: txtLastName, placeholder: "ادخل الاسم الاخير")
             hasEmptyField = true
         }
         if txtEmailRegister.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
@@ -850,10 +876,20 @@ class LogIngVC: UIViewController {
         if hasEmptyField { return }
         
         guard !myDate.isEmpty else {
-            print("من فضلك اختر تاريخ الميلاد أولاً")
+            self.errorRegisterMsg.isHidden = false
+
+            errorRegisterMsg.text = "من فضلك اختر تاريخ الميلاد أولاً"
+            errorRegisterMsg.textColor = .appRed
             return
         }
+        guard !gender.isEmpty else {
+            self.errorRegisterMsg.isHidden = false
 
+            errorRegisterMsg.text = "من فضلك اختر النوع أولاً"
+            errorRegisterMsg.textColor = .appRed
+            return
+        }
+        validatePassword()
         if !passError {
             // ✅ تأكد إن القيم نظيفة وصحيحة
             let email = (txtEmailRegister.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -891,6 +927,9 @@ class LogIngVC: UIViewController {
                             resetVC.titlelbl = "مرحباً \(self.txtFirstName.text ?? "")"
                             resetVC.suptitlelbl = "لقد انشأت حسابك بنجاح"
                             resetVC.msglbl = "قم بتسجيل الدخول في الخطوة التالية وأبدا بملئ بياناتك فى ملفك الشخصي"
+                            resetVC.loadViewIfNeeded() // ضروري قبل التعديل على الـ outlets
+                            resetVC.logout.isHidden = true
+
                             resetVC.modalPresentationStyle = .fullScreen
                             resetVC.modalTransitionStyle = .crossDissolve
                             self.present(resetVC, animated: true)
@@ -908,6 +947,7 @@ class LogIngVC: UIViewController {
         }else {
             //  اهتز فقط الشروط اللي فيها أخطاء (لونها أحمر)
             
+            
             if CheckMarkForEmail.tintColor == .appRed {
                 shake(txtEmailRegister)
                 self.errorRegisterMsg.textColor = .appRed
@@ -918,8 +958,11 @@ class LogIngVC: UIViewController {
             }
             if lblPasswordMatches.textColor == .appRed || markPasswordMatches.tintColor == .appRed {
                 shake(txtConfirmPassRegister)
+                shake(txtPassRegister)
                 self.errorRegisterMsg.textColor = .appRed
                 self.errorRegisterMsg.isHidden = false
+                txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                txtConfirmPassRegister.layer.borderColor = UIColor.red.cgColor
 
                 errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
 
@@ -927,6 +970,8 @@ class LogIngVC: UIViewController {
             
             if lblPassword8letters.textColor == .appRed || markPassword8letters.tintColor == .appRed {
                 shake(txtPassRegister)
+                txtPassRegister.layer.borderColor = UIColor.red.cgColor
+
                 self.errorRegisterMsg.textColor = .appRed
                 self.errorRegisterMsg.isHidden = false
 
@@ -936,6 +981,8 @@ class LogIngVC: UIViewController {
             
             if lbllblPasswordHasNumbers.textColor == .appRed || marklblPasswordHasNumbers.tintColor == .appRed {
                 shake(txtPassRegister)
+                txtPassRegister.layer.borderColor = UIColor.red.cgColor
+
                 self.errorRegisterMsg.textColor = .appRed
                 self.errorRegisterMsg.isHidden = false
 
@@ -945,6 +992,8 @@ class LogIngVC: UIViewController {
             
             if lblUnallowedSymbols.textColor == .appRed || markUnallowedSymbols.tintColor == .appRed {
                 shake(txtPassRegister)
+                txtPassRegister.layer.borderColor = UIColor.red.cgColor
+
                 self.errorRegisterMsg.textColor = .appRed
                 self.errorRegisterMsg.isHidden = false
 

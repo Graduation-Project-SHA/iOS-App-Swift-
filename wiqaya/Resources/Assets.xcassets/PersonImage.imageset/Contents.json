@@ -1,19 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "Copilot_20251017_121142-3.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "Copilot_20251017_121142-3@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "Copilot_20251017_121142-3@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "UserImage.pdf",
+      "idiom" : "universal"
     }
   ],
   "info" : {

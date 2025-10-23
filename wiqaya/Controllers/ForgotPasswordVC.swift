@@ -27,8 +27,13 @@ class ForgotPasswordVC: UIViewController {
     
     @IBOutlet weak var resetPass: UILabel!
     
+    
+    @IBOutlet weak var msgError: UILabel!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        msgError.isHidden = true
         IQKeyboardManager.shared.disabledDistanceHandlingClasses = [ForgotPasswordVC.self]
 
         resetPass.font = .boldSystemFont(ofSize: 25)
@@ -64,34 +69,33 @@ class ForgotPasswordVC: UIViewController {
                 switch result {
                 case .success(let message):
                     print("✅ Password reset request sent successfully: \(message)")
-                    
-                    let alert = UIAlertController(
-                        title: "Success",
-                        message: "Verification code has been sent to your email.",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
+                    if "\(message)" == "User with this email does not exist" {
+                        self.msgError.isHidden = false
+                        self.msgError.text = "البريد الإلكتروني غير مُسجل، تأكد من صحته و حاول مرة اخرى."
+                    }else{
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         if let otpVC = storyboard.instantiateViewController(withIdentifier: "OTP") as? OTPVC {
                             otpVC.email = self.textEmail.text ?? ""
-//                            otpVC.VC = false
+                            //                            otpVC.VC = false
                             otpVC.modalPresentationStyle = .fullScreen
                             otpVC.modalTransitionStyle = .crossDissolve
                             self.present(otpVC, animated: true)
                         }
-                    })
-                    self.present(alert, animated: true)
+                    }
                     
                 case .failure(let error):
                     print("❌ Failed to send password reset request: \(error.localizedDescription)")
-                    
                     let alert = UIAlertController(
-                        title: "Error",
-                        message: "Failed to send reset request. Please check your email and try again.",
+                        title: "حدث مشكله في ارسال رمز التحقق يرجى المحاولة مرة أخرى.",
+                        message: "\(error.localizedDescription)",
                         preferredStyle: .alert
                     )
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
-                    self.present(alert, animated: true)
+                    
+                    let okAction = UIAlertAction(title: "حسناً", style: .default, handler: nil)
+                    alert.addAction(okAction)
+                    
+                    self.present(alert, animated: true, completion: nil)
+
                 }
             }
         }

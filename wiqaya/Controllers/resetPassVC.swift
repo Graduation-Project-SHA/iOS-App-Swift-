@@ -200,15 +200,17 @@ class resetPassVC: UIViewController {
                     case .success(let message):
                         print("✅ \(message)")
                         
-                        // ✅ إظهار شاشة تسجيل الدخول بعد النجاح
+                        // إظهار شاشة تسجيل الدخول بعد النجاح
                         
-                        // أو ممكن تعمل تنقل كامل:
                         
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         if let loginVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
                             loginVC.titlelbl = "تم تغيير كلمة السر بنجاح"
                             loginVC.suptitlelbl = ""
                             loginVC.msglbl = "يمكنك التسجيل الآن باستخدام البريد الإلكتروني الذي تم استخدامه في التسجيل"
+                            loginVC.loadViewIfNeeded() // ضروري قبل التعديل على الـ outlets
+                            loginVC.logout.isHidden = true
+
                             loginVC.modalPresentationStyle = .fullScreen
                             self.present(loginVC, animated: true)
                         }

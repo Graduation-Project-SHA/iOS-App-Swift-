@@ -8,7 +8,8 @@
 import UIKit
 
 class WelcomVC: UIViewController {
-    
+//    var userName : String = ""
+//    var login = LogIngVC()
     @IBOutlet weak var myCollection: UICollectionView!
     
     
@@ -28,6 +29,7 @@ class WelcomVC: UIViewController {
         initData()
         initCollectionView()
     }
+    
     
     func initData() {
         array.append(WelcomeItem(image: UIImage(named: "image1")!, title1: "أحجز معادك مع الدكتور المناسب", title2: "مجموعة من الخبراء في جميع المجالات موجودين في مكان واحد "))
@@ -67,4 +69,94 @@ class WelcomVC: UIViewController {
 
     }
     
+    
+    
+    
+    
+    //    override func viewDidAppear(_ animated: Bool) {
+    //        super.viewDidAppear(animated)
+    //        checkIfUserAlreadyLoggedIn()
+    //
+    //    }
+    //    private func checkIfUserAlreadyLoggedIn() {
+    //        let defaults = UserDefaults.standard
+    //
+    //        if let accessToken = defaults.string(forKey: "accessToken"),
+    //           !accessToken.isEmpty,
+    //           let refreshToken = defaults.string(forKey: "refreshToken"),
+    //           let name = defaults.string(forKey: "name"),
+    //           let email = defaults.string(forKey: "userEmail") {
+    //
+    //            self.userName = name
+    //            if isTokenValid(accessToken) {
+    //                print("🔐 User already logged in with valid token.")
+    //
+    //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+    //                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    //                    if let homeVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
+    //                        homeVC.titlelbl = "مرحباً \(self.userName)"
+    //                        homeVC.suptitlelbl = "لقد قمت بتسجيل الدخول مسبقاً"
+    //                        homeVC.msglbl = ""
+    //                        homeVC.loadViewIfNeeded() // ضروري قبل التعديل على الـ outlets
+    //                        homeVC.done.isHidden = true
+    //                        homeVC.modalPresentationStyle = .fullScreen
+    //                        homeVC.modalTransitionStyle = .crossDissolve
+    //                        self.present(homeVC, animated: true)
+    //                    }
+    //                }
+    //            } else {
+    //                print("⚠️ Token expired — please log in again.")
+    //                defaults.removeObject(forKey: "accessToken")
+    //                defaults.removeObject(forKey: "refreshToken")
+    //
+    //                let alert = UIAlertController(
+    //                    title: "انتهت الجلسة",
+    //                    message: "يرجى تسجيل الدخول مرة أخرى.",
+    //                    preferredStyle: .alert
+    //                )
+    //                alert.addAction(UIAlertAction(title: "حسناً", style: .default))
+    //                self.present(alert, animated: true)
+    //            }
+    //
+    //        } else {
+    //            print("🚫 No saved session found, stay on login screen")
+    //        }
+    //    }
+    //
+    //
+    //
+    //
+    //
+    //
+    //    func isTokenValid(_ token: String) -> Bool {
+    //        // التوكن بيكون 3 أجزاء مفصولة بـ "."
+    //        let segments = token.split(separator: ".")
+    //        guard segments.count == 3 else { return false }
+    //
+    //        // الجزء الأوسط هو الـ payload
+    //        let payloadSegment = segments[1]
+    //
+    //        // نحول الـ Base64 إلى Data
+    //        var base64 = String(payloadSegment)
+    //            .replacingOccurrences(of: "-", with: "+")
+    //            .replacingOccurrences(of: "_", with: "/")
+    //
+    //        // تكملة padding لو ناقص
+    //        while base64.count % 4 != 0 {
+    //            base64.append("=")
+    //        }
+    //
+    //        guard let payloadData = Data(base64Encoded: base64),
+    //              let json = try? JSONSerialization.jsonObject(with: payloadData) as? [String: Any],
+    //              let exp = json["exp"] as? TimeInterval else {
+    //            return false
+    //        }
+    //
+    //        // نحسب الوقت الحالي
+    //        let expirationDate = Date(timeIntervalSince1970: exp)
+    //        return Date() < expirationDate
+    //    }
+    //
+    
+
 }

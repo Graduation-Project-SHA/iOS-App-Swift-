@@ -29,9 +29,16 @@ class OTPVC: UIViewController {
     @IBOutlet weak var reSend: UIButton!
     @IBOutlet weak var lblReSend: UILabel!
     
+    @IBOutlet weak var labelresend: UILabel!
+    
+    
+    @IBOutlet weak var msgError: UILabel!
+    
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        msgError.isHidden = true
         IQKeyboardManager.shared.disabledDistanceHandlingClasses = [OTPVC.self]
         txtPhone.text = email
         
@@ -44,7 +51,7 @@ class OTPVC: UIViewController {
         }
         phoneView.isHidden = true
         
-        // ✅ أول ما الصفحة تفتح، يبدأ العد التنازلي لإعادة الإرسال
+        // أول ما الصفحة تفتح، يبدأ العد التنازلي لإعادة الإرسال
         showResendUIAndStartCountdown()
     }
     
@@ -81,6 +88,9 @@ class OTPVC: UIViewController {
                     }
                     
                 case .failure(let error):
+                    self.msgError.isHidden = false
+                    self.msgError.text = error.localizedDescription
+                    
                     print("❌ Verification failed: \(error.localizedDescription)")
                 }
             }
@@ -91,22 +101,23 @@ class OTPVC: UIViewController {
     @IBAction func reSendButton(_ sender: Any) {
         print("🔄 إعادة إرسال الكود...")
         
-        // ✅ إعادة إظهار عناصر العدّ والزرار
+        // عادة إظهار عناصر العدّ والزرار
         lblReSend.isHidden = false
+        labelresend.isHidden = false
         lblCounter.isHidden = false
         reSend.isHidden = false
         
-        // ✅ تعطيل الزر مؤقتًا
+        // تعطيل الزر مؤقتًا
         reSend.isEnabled = false
         reSend.setTitleColor(.systemGray, for: .normal)
         
-        // ✅ إعادة تعيين العداد وتشغيله من جديد
+        // إعادة تعيين العداد وتشغيله من جديد
         countdownTimer?.invalidate()
         remainingSeconds = 30
         startCountdown()
-        
-        // ✅ استدعاء API لإرسال كود جديد
-        api.requestPasswordReset(email: email) { result in
+        var email1 = txtPhone.text ?? ""
+        // استدعاء API لإرسال كود جديد
+        api.requestPasswordReset(email: email1) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let message):
@@ -123,6 +134,8 @@ class OTPVC: UIViewController {
         lblReSend.isHidden = false
         reSend.isHidden = false
         lblCounter.isHidden = false
+        labelresend.isHidden = false
+
         
         reSend.isEnabled = false
         reSend.setTitleColor(.systemGray, for: .normal)
@@ -133,16 +146,17 @@ class OTPVC: UIViewController {
     
     private func startCountdown() {
         countdownTimer?.invalidate()
-        lblCounter.text = "إعادة إرسال خلال \(remainingSeconds)ث"
+        lblCounter.text = "\(remainingSeconds)ث"
         
         countdownTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
             self.remainingSeconds -= 1
-            self.lblCounter.text = "إعادة إرسال خلال \(self.remainingSeconds)ث"
+            self.lblCounter.text = "\(self.remainingSeconds)ث"
             
             if self.remainingSeconds <= 0 {
                 timer.invalidate()
                 self.lblCounter.isHidden = true
                 self.reSend.isEnabled = true
+                self.labelresend.isHidden = true
                 self.reSend.setTitleColor(.systemBlue, for: .normal)
             }
         }

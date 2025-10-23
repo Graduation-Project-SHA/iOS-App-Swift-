@@ -24,6 +24,9 @@ class SuccessVC: UIViewController {
     
     @IBOutlet weak var done: UIButton!
     
+    @IBOutlet weak var logout: UIButton!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -42,5 +45,27 @@ class SuccessVC: UIViewController {
         
     }
     
+    @IBAction func logoutButton(_ sender: Any) {
+        
+        let defaults = UserDefaults.standard
+        
+        // حذف بيانات الجلسة
+        defaults.removeObject(forKey: "accessToken")
+        defaults.removeObject(forKey: "refreshToken")
+        defaults.removeObject(forKey: "name")
+        defaults.removeObject(forKey: "userEmail")
+        
+        defaults.synchronize() // optional, لكن ممكن تحسن التزامن
+        
+        // الرجوع لصفحة الـ Login
+        if let storyboard = self.storyboard,
+           let loginVC = storyboard.instantiateViewController(withIdentifier: "Login") as? LogIngVC {
+            
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            self.present(loginVC, animated: true)
+        }
 
+    }
+    
 }

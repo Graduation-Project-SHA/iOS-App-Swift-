@@ -3,7 +3,7 @@ import UIKit
 class APIService {
     
     // Url
-    let base = "https://dispatched-annual-alot-camp.trycloudflare.com"
+    let base = "https://tape-ate-unknown-rides.trycloudflare.com"
     
     // Errors
     let internetError = ErrorResponse(message: ["Internet error, please try again!"])
