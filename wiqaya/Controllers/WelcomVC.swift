@@ -50,21 +50,40 @@ class WelcomVC: UIViewController {
         } else {
             // لو وصلنا للـ آخر cell ننفذ الانتقال للـ Login
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let otpVC = storyboard.instantiateViewController(withIdentifier: "Login") as? LogIngVC {
-                otpVC.modalPresentationStyle = .fullScreen
-                otpVC.modalTransitionStyle = .crossDissolve
-                present(otpVC, animated: true)
+            
+            if let loginVC = storyboard.instantiateViewController(withIdentifier: "Login") as? LogIngVC {
+                loginVC.modalPresentationStyle = .fullScreen
+                loginVC.modalTransitionStyle = .crossDissolve
+                present(loginVC, animated: true)
+
+                // الحل الأساسي هنا 👇
+//                DispatchQueue.main.async {
+//                    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//                       let window = scene.windows.first {
+//                        window.rootViewController = loginVC
+//                        window.makeKeyAndVisible()
+//                    }
+//                }
             }
         }
 
     }
     
     @IBAction func skipButton(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let otpVC = storyboard.instantiateViewController(withIdentifier: "Login") as? LogIngVC {
-            otpVC.modalPresentationStyle = .fullScreen
-            otpVC.modalTransitionStyle = .crossDissolve // أنيميشن لطيف (اختياري)
-            present(otpVC, animated: true)
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "HomeTabBar") as? HomeTabBarViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: true)
+            // الحل الأساسي هنا 👇
+//            DispatchQueue.main.async {
+//                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//                   let window = scene.windows.first {
+//                    window.rootViewController = loginVC
+//                    window.makeKeyAndVisible()
+//                }
+//            }
         }
 
     }

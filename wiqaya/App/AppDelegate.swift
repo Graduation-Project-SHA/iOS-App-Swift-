@@ -7,6 +7,7 @@
 
 import UIKit
 import IQKeyboardManagerSwift
+import IQKeyboardToolbarManager
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -14,10 +15,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         IQKeyboardManager.shared.isEnabled = true
-        IQKeyboardManager.shared.enableAutoToolbar = true
         IQKeyboardManager.shared.resignOnTouchOutside = true
         IQKeyboardManager.shared.keyboardDistance = 40
-
+        
+        // الجديد:
+        if #available(iOS 15.0, *) {
+            IQKeyboardToolbarManager.shared.isEnabled = true
+        }
         return true
     }
 

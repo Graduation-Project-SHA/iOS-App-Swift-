@@ -4,13 +4,13 @@
 //
 //  Created by AhmadALshafei on 10/23/25.
 //
-import UIKit
-
-class RegisterAsDoctor : LogIngVC {
-    
-    
-    
-    override func viewDidLoad() {
-        <#code#>
-    }
-}
+//import UIKit
+//
+//class RegisterAsDoctor : LogIngVC {
+//    
+//    
+//    
+//    override func viewDidLoad() {
+//        <#code#>
+//    }
+//}

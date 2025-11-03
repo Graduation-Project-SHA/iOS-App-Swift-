@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import MapKit
+import IQKeyboardManagerSwift
 
 class LogIngVC: UIViewController {
     
     var iAmDoctor: Bool = false
     var gend: Bool = false
     var isRememberMeSelected = false
+    var isLoginSelected = true
     var country: String = ""
     var phoneCode: String = ""
     var myDate : String = ""
@@ -23,10 +26,9 @@ class LogIngVC: UIViewController {
     
     let api = APIService()
 
-
     // MARK: - Login as User and Doctor View
 
-    
+
     @IBOutlet weak var logo: UILabel!
     @IBOutlet weak var lblStartNow: UILabel!
     @IBOutlet weak var lblMarketing: UILabel!
@@ -52,11 +54,39 @@ class LogIngVC: UIViewController {
     
     
     
+    
+    // MARK: - Register as Doctor View
+    var stageNumber : Int = 0
+    let complateImages: [UIImage] = [
+        UIImage(named: "complate1")!,
+        UIImage(named: "complate2")!,
+        UIImage(named: "complate3")!
+    ]
+
+
+    @IBOutlet weak var completionStageImage: UIImageView!
+    
+    
+    @IBOutlet weak var signUp: UIButton!
+    
+    @IBOutlet weak var firstStageView: UIView!
+    
+    
+    @IBOutlet weak var secondStageView: UIView!
+    
+    @IBOutlet weak var backStage: UIButton!
+    
+    
+    
     // MARK: - Register as User View
 
+    
     @IBOutlet weak var myScrollView: UIScrollView!
     
-
+    @IBOutlet weak var topRegisterView: NSLayoutConstraint!
+    
+    
+    
     @IBOutlet weak var firstName: UILabel!
     @IBOutlet weak var firstNameView: UIView!
     @IBOutlet weak var txtFirstName: UITextField!
@@ -166,7 +196,11 @@ class LogIngVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        backStage.isHidden = true
+        firstStageView.isHidden = true
+        secondStageView.isHidden = true
 
+        completionStageImage.isHidden = true
         myScrollView.isHidden = true
         CheckMarkForEmail.isHidden = true
         authView.layer.cornerRadius = 20
@@ -226,7 +260,7 @@ class LogIngVC: UIViewController {
         showPassRegister.tintColor = .systemGray3
         showPassConfirmPassRegister.setImage(UIImage(systemName: "eye.slash"), for: .normal)
         showPassConfirmPassRegister.tintColor = .systemGray3
-        
+        completionStageImage.image = complateImages[0]
         
         
         
@@ -257,6 +291,7 @@ class LogIngVC: UIViewController {
         iAmDoctor = false
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         doctor.backgroundColor = .clear
+
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -507,6 +542,11 @@ class LogIngVC: UIViewController {
     
     @IBAction func normalUserButton(_ sender: UIButton) {
         iAmDoctor = false
+        signUp.setTitle("إنشاء حساب", for: .normal)
+        backStage.isHidden = true
+        completionStageImage.isHidden = true
+        topRegisterView.constant = 24
+
         isDoctor = "Patient"
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         doctor.backgroundColor = .clear
@@ -516,8 +556,14 @@ class LogIngVC: UIViewController {
     
     @IBAction func doctorButton(_ sender: UIButton) {
         iAmDoctor = true
+        signUp.setTitle("التالي", for: .normal)
+
         isDoctor = "Doctor"
-        myScrollView.isHidden = true
+        if !isLoginSelected{
+            completionStageImage.isHidden = false
+            topRegisterView.constant = 50
+        }
+//        myScrollView.isHidden = true
 
         doctor.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         normalUser.backgroundColor = .clear
@@ -536,27 +582,40 @@ class LogIngVC: UIViewController {
     @IBAction func segmentAction(_ sender: UISegmentedControl) {
         if sender.selectedSegmentIndex == 1 {
             logInView.isHidden = false
+            backStage.isHidden = true
 
+            isLoginSelected = true
             print("🔑 تسجيل الدخول")
             myScrollView.isHidden = true
             logInView.isHidden = false
+            completionStageImage.isHidden = true
+
 
         } else if sender.selectedSegmentIndex == 0 {
-            
+            isLoginSelected = false
+
             print("🆕 إنشاء حساب")
             
             if iAmDoctor {
-                
-//                logInView.
-//                myScrollView.
+                topRegisterView.constant = 50
+
                 logInView.isHidden = true
-                myScrollView.isHidden = true
+                completionStageImage.isHidden = false
+                myScrollView.isHidden = false
+                firstStageView.isHidden = false
 
             }else if !iAmDoctor{
+                firstStageView.isHidden = false
+
+                completionStageImage.isHidden = true
+                topRegisterView.constant = 24
+
                 logInView.isHidden = true
                 myScrollView.isHidden = false
 
             }else{
+                completionStageImage.isHidden = true
+
                 logInView.isHidden = true
                 myScrollView.isHidden = true
             }
@@ -890,126 +949,211 @@ class LogIngVC: UIViewController {
             return
         }
         validatePassword()
-        if !passError {
-            // ✅ تأكد إن القيم نظيفة وصحيحة
-            let email = (txtEmailRegister.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-            let password = txtPassRegister.text ?? ""
-            let name = "\(txtFirstName.text ?? "") \(txtLastName.text ?? "")"
-            let dob = myDate
-            let phone = formatphone
-            let gender = gender
-            let address = country
-            let role = isDoctor
-            
-            api.signUpUser(
-                email: email,
-                password: password,
-                name: name,
-                phone: phone,
-                dob: dob,
-                gender: gender,
-                address: address,
-                role: role
-            ) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let response):
-                        print("✅ \(response.message)")
-                        print("👤 Created user: \(response.data.name), role: \(response.data.role)")
-                        
-                        // الانتقال بعد النجاح
-                        
-                        self.myScrollView.isHidden = true
-                        self.logInView.isHidden = false
-                        
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        if let resetVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
-                            resetVC.titlelbl = "مرحباً \(self.txtFirstName.text ?? "")"
-                            resetVC.suptitlelbl = "لقد انشأت حسابك بنجاح"
-                            resetVC.msglbl = "قم بتسجيل الدخول في الخطوة التالية وأبدا بملئ بياناتك فى ملفك الشخصي"
-                            resetVC.loadViewIfNeeded() // ضروري قبل التعديل على الـ outlets
-                            resetVC.logout.isHidden = true
-
-                            resetVC.modalPresentationStyle = .fullScreen
-                            resetVC.modalTransitionStyle = .crossDissolve
-                            self.present(resetVC, animated: true)
-                        }
-
-                    case .failure(let error):
-                        self.errorRegisterMsg.textColor = .appRed
-                        self.errorRegisterMsg.isHidden = false
-                        self.errorRegisterMsg.text = error.localizedDescription
-                        
-                        print("❌ Sign up error: \(error.localizedDescription)")
-                    }
+        
+        if iAmDoctor {
+            if !passError {
+                backStage.isHidden = false
+                stageNumber += 1
+                firstStageView.isHidden = true
+                secondStageView.isHidden = false
+                
+                completionStageImage.image = complateImages[1]
+                
+            }else {
+                //  اهتز فقط الشروط اللي فيها أخطاء (لونها أحمر)
+                
+                
+                if CheckMarkForEmail.tintColor == .appRed {
+                    shake(txtEmailRegister)
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    errorRegisterMsg.text = "البريد الإلكتروني غير صحيح"
+                    
+                    
                 }
+                if lblPasswordMatches.textColor == .appRed || markPasswordMatches.tintColor == .appRed {
+                    shake(txtConfirmPassRegister)
+                    shake(txtPassRegister)
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    txtConfirmPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                if lblPassword8letters.textColor == .appRed || markPassword8letters.tintColor == .appRed {
+                    shake(txtPassRegister)
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                if lbllblPasswordHasNumbers.textColor == .appRed || marklblPasswordHasNumbers.tintColor == .appRed {
+                    shake(txtPassRegister)
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                if lblUnallowedSymbols.textColor == .appRed || markUnallowedSymbols.tintColor == .appRed {
+                    shake(txtPassRegister)
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                //  ممكن تضيف اهتزاز بسيط للشاشة كتنبيه عام (اختياري)
+                let generator = UINotificationFeedbackGenerator()
+                generator.notificationOccurred(.error)
             }
         }else {
-            //  اهتز فقط الشروط اللي فيها أخطاء (لونها أحمر)
-            
-            
-            if CheckMarkForEmail.tintColor == .appRed {
-                shake(txtEmailRegister)
-                self.errorRegisterMsg.textColor = .appRed
-                self.errorRegisterMsg.isHidden = false
-                errorRegisterMsg.text = "البريد الإلكتروني غير صحيح"
+            if !passError {
+                // ✅ تأكد إن القيم نظيفة وصحيحة
+                let email = (txtEmailRegister.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+                let password = txtPassRegister.text ?? ""
+                let name = "\(txtFirstName.text ?? "") \(txtLastName.text ?? "")"
+                let dob = myDate
+                let phone = formatphone
+                let gender = gender
+                let address = country
+                let role = isDoctor
+                
+                api.signUpUser(
+                    email: email,
+                    password: password,
+                    name: name,
+                    phone: phone,
+                    dob: dob,
+                    gender: gender,
+                    address: address,
+                    role: role
+                ) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let response):
+                            print("✅ \(response.message)")
+                            print("👤 Created user: \(response.data.name), role: \(response.data.role)")
+                            
+                            // الانتقال بعد النجاح
+                            
+                            self.myScrollView.isHidden = true
+                            self.logInView.isHidden = false
+                            
+                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                            if let resetVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
+                                resetVC.titlelbl = "مرحباً \(self.txtFirstName.text ?? "")"
+                                resetVC.suptitlelbl = "لقد انشأت حسابك بنجاح"
+                                resetVC.msglbl = "قم بتسجيل الدخول في الخطوة التالية وأبدا بملئ بياناتك فى ملفك الشخصي"
+                                resetVC.loadViewIfNeeded() // ضروري قبل التعديل على الـ outlets
+                                resetVC.logout.isHidden = true
+                                
+                                resetVC.modalPresentationStyle = .fullScreen
+                                resetVC.modalTransitionStyle = .crossDissolve
+                                self.present(resetVC, animated: true)
+                            }
+                            
+                        case .failure(let error):
+                            self.errorRegisterMsg.textColor = .appRed
+                            self.errorRegisterMsg.isHidden = false
+                            self.errorRegisterMsg.text = error.localizedDescription
+                            
+                            print("❌ Sign up error: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }else {
+                //  اهتز فقط الشروط اللي فيها أخطاء (لونها أحمر)
                 
                 
+                if CheckMarkForEmail.tintColor == .appRed {
+                    shake(txtEmailRegister)
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    errorRegisterMsg.text = "البريد الإلكتروني غير صحيح"
+                    
+                    
+                }
+                if lblPasswordMatches.textColor == .appRed || markPasswordMatches.tintColor == .appRed {
+                    shake(txtConfirmPassRegister)
+                    shake(txtPassRegister)
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    txtConfirmPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                if lblPassword8letters.textColor == .appRed || markPassword8letters.tintColor == .appRed {
+                    shake(txtPassRegister)
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                if lbllblPasswordHasNumbers.textColor == .appRed || marklblPasswordHasNumbers.tintColor == .appRed {
+                    shake(txtPassRegister)
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                if lblUnallowedSymbols.textColor == .appRed || markUnallowedSymbols.tintColor == .appRed {
+                    shake(txtPassRegister)
+                    txtPassRegister.layer.borderColor = UIColor.red.cgColor
+                    
+                    self.errorRegisterMsg.textColor = .appRed
+                    self.errorRegisterMsg.isHidden = false
+                    
+                    errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
+                    
+                }
+                
+                //  ممكن تضيف اهتزاز بسيط للشاشة كتنبيه عام (اختياري)
+                let generator = UINotificationFeedbackGenerator()
+                generator.notificationOccurred(.error)
             }
-            if lblPasswordMatches.textColor == .appRed || markPasswordMatches.tintColor == .appRed {
-                shake(txtConfirmPassRegister)
-                shake(txtPassRegister)
-                self.errorRegisterMsg.textColor = .appRed
-                self.errorRegisterMsg.isHidden = false
-                txtPassRegister.layer.borderColor = UIColor.red.cgColor
-                txtConfirmPassRegister.layer.borderColor = UIColor.red.cgColor
-
-                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
-
-            }
-            
-            if lblPassword8letters.textColor == .appRed || markPassword8letters.tintColor == .appRed {
-                shake(txtPassRegister)
-                txtPassRegister.layer.borderColor = UIColor.red.cgColor
-
-                self.errorRegisterMsg.textColor = .appRed
-                self.errorRegisterMsg.isHidden = false
-
-                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
-
-            }
-            
-            if lbllblPasswordHasNumbers.textColor == .appRed || marklblPasswordHasNumbers.tintColor == .appRed {
-                shake(txtPassRegister)
-                txtPassRegister.layer.borderColor = UIColor.red.cgColor
-
-                self.errorRegisterMsg.textColor = .appRed
-                self.errorRegisterMsg.isHidden = false
-
-                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
-
-            }
-            
-            if lblUnallowedSymbols.textColor == .appRed || markUnallowedSymbols.tintColor == .appRed {
-                shake(txtPassRegister)
-                txtPassRegister.layer.borderColor = UIColor.red.cgColor
-
-                self.errorRegisterMsg.textColor = .appRed
-                self.errorRegisterMsg.isHidden = false
-
-                errorRegisterMsg.text = "يجب ان تحقق شروط كلمة السر"
-
-            }
-            
-            //  ممكن تضيف اهتزاز بسيط للشاشة كتنبيه عام (اختياري)
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.error)
         }
     }
 
 
-    
-    
+    // MARK: - Register as Doctor
+    @IBAction func bsckStageButton(_ sender: Any) {
+
+        if stageNumber == 1{
+            backStage.isHidden = true
+            stageNumber -= 1
+            completionStageImage.image = complateImages[0]
+
+            firstStageView.isHidden = false
+            secondStageView.isHidden = true
+
+        }
+        
+    }
 }
 
 // MARK: - UITextFieldDelegate
