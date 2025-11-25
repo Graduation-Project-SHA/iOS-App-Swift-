@@ -32,6 +32,14 @@ class HomeViewController: UIViewController {
     
     @IBOutlet weak var nextDateCollection: UICollectionView!
     
+    
+    @IBOutlet weak var bookDate: UIButton!
+    
+    @IBOutlet weak var lookingForParamedic: UIButton!
+    
+    
+    
+    
     var servesArray = [servesItem]()
     var nextDateArray = [nextDateItem]()
     
@@ -42,6 +50,9 @@ class HomeViewController: UIViewController {
         nextDateCollection.delegate = self
         nextDateCollection.dataSource = self
 
+        bookDate.tintColor = UIColor(hex: "#6161FF")
+        
+        lookingForParamedic.tintColor = UIColor(hex: "#E6474F")
         ViewAppoin.isHidden = false
         ViewAppoin.layer.cornerRadius = 10
 //        viewTimeAppoin.layer.cornerRadius = 10
@@ -120,7 +131,28 @@ class HomeViewController: UIViewController {
         view.layer.shadowPath = UIBezierPath(roundedRect: view.bounds, cornerRadius: cornerRadius).cgPath
     }
 
+    
+    @IBAction func bookAppointmentTapped(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "reservation") as? reservationViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: true)
+        }
+    }
+    @IBAction func lookingParamedicButton(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "ParamedicNearby") as? ParamedicNearbyViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: true)
+        }
 
+    }
+
+    
 }
 
 extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -165,13 +197,6 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 cell.specialtyDoctor.text = item.specialtyDoctor
                 cell.clock.text = item.clock
                 cell.date.text = item.date
-                
-                // شكل طبيعي للخلايا
-                cell.nameDoctor.textColor = .label
-                cell.specialtyDoctor.textColor = .secondaryLabel
-                cell.clock.textColor = .label
-                cell.date.textColor = .label
-                cell.doctorImage.tintColor = .none
             } else {
                 // خلية placeholder
                 cell.doctorImage.image = UIImage(systemName: "calendar.badge.exclamationmark")
@@ -179,14 +204,10 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 cell.specialtyDoctor.text = ""
                 cell.clock.text = ""
                 cell.date.text = ""
-                
-                // تلوين رمادي بسيط
-//                cell.nameDoctor.textColor = .gray
-//                cell.doctorImage.tintColor = .gray
             }
             return cell
         }
-        
+
         return UICollectionViewCell()
     }
     
@@ -245,6 +266,8 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         targetContentOffset.pointee = offset
     }
 
+    
+    
 
 }
 

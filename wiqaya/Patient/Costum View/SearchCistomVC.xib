@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SearchCistomVC" customModule="wiqaya" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="345" height="50"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uU8-IU-EZz" userLabel="searchView">
+                    <rect key="frame" x="0.0" y="0.0" width="345" height="50"/>
+                    <subviews>
+                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="البحث عن طبيب.." textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Gqg-eL-8Nw">
+                            <rect key="frame" x="55" y="0.0" width="290" height="50"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="290" id="7Ix-bl-gb6"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </textField>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="50R-6G-roj">
+                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="50" id="5MN-zf-1O2"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="NE2-bD-vkZ"/>
+                                <constraint firstAttribute="height" constant="50" id="UKk-Mv-XMY"/>
+                            </constraints>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain" image="line.3.horizontal.decrease.circle" catalog="system" cornerStyle="dynamic">
+                                <backgroundConfiguration key="background" cornerRadius="8" strokeWidth="0.69999999999999996">
+                                    <color key="strokeColor" systemColor="systemGray5Color"/>
+                                </backgroundConfiguration>
+                            </buttonConfiguration>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="INa-Or-F37">
+                            <rect key="frame" x="309" y="11" width="28" height="29"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="28" id="Z1r-ta-u2Y"/>
+                                <constraint firstAttribute="height" constant="29" id="xAB-ml-UmQ"/>
+                            </constraints>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain" image="magnifyingglass" catalog="system"/>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="2QX-5M-VfR"/>
+                        <constraint firstAttribute="height" relation="lessThanOrEqual" constant="50" id="645-O8-YSn"/>
+                        <constraint firstAttribute="trailing" secondItem="INa-Or-F37" secondAttribute="trailing" constant="8" id="7oh-nG-AY1"/>
+                        <constraint firstAttribute="bottom" secondItem="50R-6G-roj" secondAttribute="bottom" id="Ifj-Da-IJQ"/>
+                        <constraint firstItem="INa-Or-F37" firstAttribute="top" secondItem="uU8-IU-EZz" secondAttribute="top" constant="11" id="JmM-NL-nsK"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="YAa-7W-oGL"/>
+                        <constraint firstAttribute="bottom" secondItem="Gqg-eL-8Nw" secondAttribute="bottom" id="Zvf-QI-i2c"/>
+                        <constraint firstItem="Gqg-eL-8Nw" firstAttribute="top" secondItem="uU8-IU-EZz" secondAttribute="top" id="bcd-89-g7m"/>
+                        <constraint firstAttribute="trailing" secondItem="Gqg-eL-8Nw" secondAttribute="trailing" id="hR6-do-ATg"/>
+                        <constraint firstItem="50R-6G-roj" firstAttribute="top" secondItem="uU8-IU-EZz" secondAttribute="top" id="jpa-ZI-tJd"/>
+                        <constraint firstItem="50R-6G-roj" firstAttribute="leading" secondItem="uU8-IU-EZz" secondAttribute="leading" id="yrV-2j-rfK"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="uU8-IU-EZz" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="7sf-2h-Yje"/>
+                <constraint firstAttribute="trailing" secondItem="uU8-IU-EZz" secondAttribute="trailing" id="BEa-qT-0aA"/>
+                <constraint firstAttribute="bottom" secondItem="uU8-IU-EZz" secondAttribute="bottom" id="FGF-FN-ZrP"/>
+                <constraint firstItem="uU8-IU-EZz" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="Ojd-W2-WHL"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="107.63358778625954" y="543.66197183098598"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="123"/>
+        <image name="magnifyingglass" catalog="system" width="128" height="117"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

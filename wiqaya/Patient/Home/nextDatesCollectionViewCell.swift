@@ -27,11 +27,11 @@ class nextDatesCollectionViewCell: UICollectionViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        setupShadow(for: background, cornerRadius: 10)
-        backGroundDate.layer.cornerRadius = 5
+        setupShadow(for: background, cornerRadius: 20)
+        backGroundDate.layer.cornerRadius = 10
         
         nameDoctor.textColor = .white
-        specialtyDoctor.textColor = .lightGray
+        specialtyDoctor.textColor = .white
         
 //        layer.cornerRadius = 20
 //        layer.masksToBounds = false

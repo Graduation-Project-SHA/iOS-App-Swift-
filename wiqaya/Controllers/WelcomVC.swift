@@ -72,7 +72,7 @@ class WelcomVC: UIViewController {
     @IBAction func skipButton(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Patient", bundle: nil)
         
-        if let loginVC = storyboard.instantiateViewController(withIdentifier: "HomeTabBar") as? HomeTabBarViewController {
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "CallConfirm") as? CallConfirmViewController {
             loginVC.modalPresentationStyle = .fullScreen
             loginVC.modalTransitionStyle = .crossDissolve
             present(loginVC, animated: true)
