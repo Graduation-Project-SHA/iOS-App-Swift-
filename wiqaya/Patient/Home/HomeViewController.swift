@@ -238,6 +238,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         } else {
             return .zero
         }
+        
     }
 
     func scrollViewWillEndDragging(_ scrollView: UIScrollView,
@@ -266,7 +267,18 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         targetContentOffset.pointee = offset
     }
 
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == nextDateCollection {
+            let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+            
+            if let loginVC = storyboard.instantiateViewController(withIdentifier: "Appointment") as? AppointmentViewController {
+                loginVC.modalPresentationStyle = .fullScreen
+                loginVC.modalTransitionStyle = .crossDissolve
+                present(loginVC, animated: false)
+            }
+
+        }
+    }
     
 
 }
@@ -278,9 +290,9 @@ struct servesItem {
     var label : String
 }
 struct nextDateItem {
-    var doctorImage : UIImage
-    var nameDoctor : String
-    var specialtyDoctor : String
-    var clock : String
-    var date : String
+    var doctorImage : UIImage?
+    var nameDoctor : String?
+    var specialtyDoctor : String?
+    var clock : String?
+    var date : String?
 }

@@ -74,7 +74,17 @@ class HospitalDetailsViewController: UIViewController {
         }
 
     }
-    
+    @IBAction func backbutton(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "ParamedicNearby") as? ParamedicNearbyViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: false)
+        }
+        
+    }
+
     
 
 }

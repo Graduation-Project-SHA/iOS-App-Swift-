@@ -70,12 +70,16 @@ class WelcomVC: UIViewController {
     }
     
     @IBAction func skipButton(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        let storyboard = UIStoryboard(name: "Doctor", bundle: nil)
         
-        if let loginVC = storyboard.instantiateViewController(withIdentifier: "CallConfirm") as? CallConfirmViewController {
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "HomeDoctorTabBar") as? HomeDoctorTabBarViewController {
             loginVC.modalPresentationStyle = .fullScreen
             loginVC.modalTransitionStyle = .crossDissolve
             present(loginVC, animated: true)
+            
+            
+            
+            
             // الحل الأساسي هنا 👇
 //            DispatchQueue.main.async {
 //                if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,

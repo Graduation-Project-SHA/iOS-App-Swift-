@@ -2,6 +2,12 @@ import UIKit
 import MapKit
 import CoreLocation
 
+// MARK: - Custom Annotation للمستشفيات
+class HospitalAnnotation: MKPointAnnotation {
+    var imageName: String?
+    var tableIndex: Int?   // عشان نعرف ده مربوط بأي row في الجدول
+}
+
 class ParamedicNearbyViewController: UIViewController {
     @IBOutlet weak var GradientView: UIView!
     @IBOutlet weak var searchbar: UIView!
@@ -32,11 +38,10 @@ class ParamedicNearbyViewController: UIViewController {
     // عشان نخزن قيمة الكونسـترينت أثناء السحب
     private var panStartConstant: CGFloat = 0
     
-    
     var locationManager = CLLocationManager()
     var lastLocation : CLLocation?
     let annotation = MKPointAnnotation()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -61,6 +66,7 @@ class ParamedicNearbyViewController: UIViewController {
         searchbar.backgroundColor = UIColor.white.withAlphaComponent(0.3)
         
         setStartingLocation()
+        addHospitalsAnnotations()   // ⬅️ إضافة الـ annotations
         setupSearchBar()
         setupSheetPanGesture()
         addGrabberToSheet()
@@ -74,13 +80,13 @@ class ParamedicNearbyViewController: UIViewController {
         }else{
             showMsg("Please Enable  Location Services")
         }
-
+        
     }
     
     func implementData() {
-        array.append(ItemHospital(name: "مستشفى نور الشروق", address: "طريق الشباب", lblAddressCar: "20 دقيقة ", lblAddress: "20 دقيقة", lblDistance: "1.2 كم"))
-        array.append(ItemHospital(name: "مستشفى نور الشروق", address: "طريق الشباب", lblAddressCar: "20 دقيقة ", lblAddress: "20 دقيقة", lblDistance: "1.2 كم"))
-        array.append(ItemHospital(name: "مستشفى نور الشروق", address: "طريق الشباب", lblAddressCar: "20 دقيقة ", lblAddress: "20 دقيقة", lblDistance: "1.2 كم"))
+        array.append(ItemHospital(name: "مستشفى نور الشروق 1", address: "طريق الشباب", lblAddressCar: "20 دقيقة ", lblAddress: "20 دقيقة", lblDistance: "1.2 كم"))
+        array.append(ItemHospital(name: "مستشفى نور الشروق 2", address: "طريق الشباب", lblAddressCar: "25 دقيقة ", lblAddress: "25 دقيقة", lblDistance: "2.3 كم"))
+        array.append(ItemHospital(name: "مستشفى نور الشروق 3", address: "طريق الشباب", lblAddressCar: "15 دقيقة ", lblAddress: "15 دقيقة", lblDistance: "0.8 كم"))
     }
     
     override func viewDidLayoutSubviews() {
@@ -108,7 +114,7 @@ class ParamedicNearbyViewController: UIViewController {
     }
     
     private func setupSearchBar() {
-        let searchVC = SearchCistomVC(nibName: "SearchCistomVC", bundle: nil)
+        let searchVC = SearchWithoutFilterViewController(nibName: "SearchWithoutFilterViewController", bundle: nil)
         addChild(searchVC)
         searchVC.view.frame = searchbar.bounds
         searchVC.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -138,15 +144,48 @@ class ParamedicNearbyViewController: UIViewController {
         GradientView.backgroundColor = .clear
         GradientView.layer.insertSublayer(gradient, at: 0)
     }
+    
     func setStartingLocation() {
         
         let location = CLLocationCoordinate2D(latitude: 29.9560079, longitude: 31.0938121)
         let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let region = MKCoordinateRegion(center: location, span: span)
         myMap.setRegion(region, animated: true)
-        myMap.setCameraBoundary(MKMapView.CameraBoundary(coordinateRegion: region), animated: true)
+//        myMap.setCameraBoundary(MKMapView.CameraBoundary(coordinateRegion: region), animated: true)
         let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 2800000)
         myMap.setCameraZoomRange(zoomRange, animated: true)
+    }
+    
+    // MARK: - إضافة الـ Annotations الخاصة بالمستشفيات على الخريطة
+    func addHospitalsAnnotations() {
+        
+        // إحداثيات كل مستشفى بنفس ترتيب array
+        let hospitalCoordinates: [CLLocationCoordinate2D] = [
+            CLLocationCoordinate2D(latitude: 29.9553802, longitude: 31.0946302),
+            CLLocationCoordinate2D(latitude: 29.955800, longitude: 31.093500),
+            CLLocationCoordinate2D(latitude: 29.956400, longitude: 31.094200)
+        ]
+        
+        let count = min(array.count, hospitalCoordinates.count)
+        
+        for index in 0..<count {
+            let item = array[index]
+            let coord = hospitalCoordinates[index]
+            
+            let annotation = HospitalAnnotation()
+            
+            // 👈 هنا الاسم = title
+            annotation.title = item.name
+            
+            // 👈 العنوان = subtitle
+            annotation.subtitle = item.address
+            
+            annotation.coordinate = coord
+            annotation.imageName = "hospital"
+            annotation.tableIndex = index
+            
+            myMap.addAnnotation(annotation)
+        }
     }
 
     @IBAction func backbutton(_ sender: Any) {
@@ -157,9 +196,8 @@ class ParamedicNearbyViewController: UIViewController {
             loginVC.modalTransitionStyle = .crossDissolve
             present(loginVC, animated: false)
         }
-
+        
     }
-    
     
 }
 
@@ -284,6 +322,7 @@ extension ParamedicNearbyViewController : UITableViewDataSource , UITableViewDel
         cell.lblAddressCar.text = array[indexPath.row].lblAddressCar
         cell.lblAddress.text = array[indexPath.row].lblAddress
         cell.lblDistance.text = array[indexPath.row].lblDistance
+        
         cell.onButtonTap = { [weak self] in
             guard let self = self else { return }
             
@@ -291,23 +330,32 @@ extension ParamedicNearbyViewController : UITableViewDataSource , UITableViewDel
             if let loginVC = storyboard.instantiateViewController(withIdentifier: "HospitalDetails") as? HospitalDetailsViewController {
                 loginVC.modalPresentationStyle = .fullScreen
                 loginVC.modalTransitionStyle = .crossDissolve
-                self.present(loginVC, animated: false)   // ⬅️ الآن يعمل بشكل صحيح
+                self.present(loginVC, animated: false)
             }
         }
-
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 150
+        return 160
     }
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-//    }
+    
+    // لما يختار مستشفى من الجدول
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "HospitalDetails") as? HospitalDetailsViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            self.present(loginVC, animated: false)
+        }
+    }
 }
 
-extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDelegate {
+// MARK: - Location + Map
 
+extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDelegate {
+    
     func islocationservicesavailable() -> Bool {
         return CLLocationManager.locationServicesEnabled()
     }
@@ -333,9 +381,9 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
             showMsg("please authorize Access to Location")
             break
         case .restricted:
-            showMsg("GPS access is restricted. In order to use tracking, please enable GPS in the Settigs app under Privacy, Location Services.")
+            showMsg("GPS access is restricted. In order to use tracking, please enable GPS in the Settings app under Privacy, Location Services.")
             break
-        default:
+        @unknown default:
             print("default..")
         }
     }
@@ -346,7 +394,6 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
             print("latitude \(location.coordinate.latitude) longitude \(location.coordinate.longitude)")
             zoomToUserLocatio(location: location)
             locationManager.stopUpdatingLocation()
-            
         }
     }
     
@@ -378,7 +425,7 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
     
     func showMsg(_ msg: String) {
         let alert = UIAlertController(title: "Permission Needed",
-                                      message: "You need to enable access in Settings.",
+                                      message: msg,
                                       preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -394,15 +441,54 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
     
     // عشان يعمل زوم لمكان المستخدم
     func zoomToUserLocatio(location : CLLocation) {
-        
-        //        let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 250, longitudinalMeters: 250)
         myMap.setRegion(region, animated: true)
-        //        myMap.setCameraBoundary(MKMapView.CameraBoundary(coordinateRegion: region), animated: true)
-        //        let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 2800000)
-        //        myMap.setCameraZoomRange(zoomRange, animated: true)
     }
-
+    
+    // شكل الـ annotation (أيقونة المستشفى)
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        // سيب مكان المستخدم زي ما هو
+        if annotation is MKUserLocation {
+            return nil
+        }
+        
+        let identifier = "HospitalAnnotationView"
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKAnnotationView
+        
+        if annotationView == nil {
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            annotationView?.canShowCallout = true
+        } else {
+            annotationView?.annotation = annotation
+        }
+        
+        if let hospitalAnnotation = annotation as? HospitalAnnotation,
+           let imageName = hospitalAnnotation.imageName {
+            annotationView?.image = UIImage(named: imageName)
+        }
+        
+        annotationView?.frame.size = CGSize(width: 40, height: 40)
+        
+        return annotationView
+    }
+    
+    // لما تدوس على الـ annotation في الخريطة
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        guard let hospitalAnnotation = view.annotation as? HospitalAnnotation,
+              let index = hospitalAnnotation.tableIndex else { return }
+        
+        let indexPath = IndexPath(row: index, section: 0)
+        
+        // اختار الـ row في الجدول
+        myTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+        
+        // افتح الـ bottom sheet على expanded
+        moveSheet(to: .medium)
+//        currentSheetState = .medium
+        // لو عايز تفتح التفاصيل كمان:
+        // tableView(myTableView, didSelectRowAt: indexPath)
+    }
 }
 
 struct ItemHospital {

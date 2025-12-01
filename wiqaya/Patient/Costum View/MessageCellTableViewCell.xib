@@ -28,10 +28,10 @@
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ObC-wl-kyi">
-                                <rect key="frame" x="63" y="12" width="211" height="50"/>
+                                <rect key="frame" x="63" y="12" width="47" height="50"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="huD-IS-b2Z">
-                                        <rect key="frame" x="8" y="8" width="195" height="34"/>
+                                        <rect key="frame" x="8" y="8" width="31" height="34"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -42,7 +42,6 @@
                                     <constraint firstAttribute="bottom" secondItem="huD-IS-b2Z" secondAttribute="bottom" constant="8" id="08F-9C-gKf"/>
                                     <constraint firstItem="huD-IS-b2Z" firstAttribute="centerY" secondItem="ObC-wl-kyi" secondAttribute="centerY" id="dqS-lv-Hym"/>
                                     <constraint firstItem="huD-IS-b2Z" firstAttribute="top" secondItem="ObC-wl-kyi" secondAttribute="top" constant="8" id="fac-P9-34w"/>
-                                    <constraint firstAttribute="width" constant="211" id="gju-i0-7gz"/>
                                     <constraint firstItem="huD-IS-b2Z" firstAttribute="leading" secondItem="ObC-wl-kyi" secondAttribute="leading" constant="8" id="tJO-gU-Mvc"/>
                                     <constraint firstAttribute="trailing" secondItem="huD-IS-b2Z" secondAttribute="trailing" constant="8" id="zDR-oN-EFr"/>
                                 </constraints>
@@ -63,7 +62,6 @@
                             <constraint firstAttribute="trailing" secondItem="Sgi-om-pID" secondAttribute="trailing" constant="24" id="DsW-e2-53U"/>
                             <constraint firstItem="Z3f-OR-bEz" firstAttribute="top" secondItem="m3C-zs-8NS" secondAttribute="top" constant="27" id="HUw-mH-ys1"/>
                             <constraint firstItem="Sgi-om-pID" firstAttribute="top" secondItem="ObC-wl-kyi" secondAttribute="bottom" constant="4" id="M8v-jp-1JV"/>
-                            <constraint firstAttribute="trailing" secondItem="ObC-wl-kyi" secondAttribute="trailing" constant="16" id="Mxd-zv-iW9"/>
                             <constraint firstAttribute="bottom" secondItem="Sgi-om-pID" secondAttribute="bottom" constant="1" id="WoN-hm-eT5"/>
                             <constraint firstItem="Z3f-OR-bEz" firstAttribute="leading" secondItem="m3C-zs-8NS" secondAttribute="leading" constant="15" id="ccl-uB-11B"/>
                             <constraint firstAttribute="bottom" secondItem="Z3f-OR-bEz" secondAttribute="bottom" constant="17" id="en5-Jn-d74"/>

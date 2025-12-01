@@ -20,10 +20,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="230" height="78"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GWW-bG-jiB">
-                                <rect key="frame" x="14" y="12" width="200" height="49"/>
+                                <rect key="frame" x="167" y="12" width="47" height="49"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ix-JJ-m1c">
-                                        <rect key="frame" x="8" y="8" width="184" height="33"/>
+                                        <rect key="frame" x="8" y="8" width="31" height="33"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -31,7 +31,6 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.16862747073173523" green="0.45098042488098145" blue="0.9529411792755127" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="4W3-J8-pgQ"/>
                                     <constraint firstAttribute="trailing" secondItem="4ix-JJ-m1c" secondAttribute="trailing" constant="8" id="OUg-yG-xXu"/>
                                     <constraint firstAttribute="bottom" secondItem="4ix-JJ-m1c" secondAttribute="bottom" constant="8" id="POp-a0-ZJp"/>
                                     <constraint firstItem="4ix-JJ-m1c" firstAttribute="centerY" secondItem="GWW-bG-jiB" secondAttribute="centerY" id="ozp-Ml-WYn"/>

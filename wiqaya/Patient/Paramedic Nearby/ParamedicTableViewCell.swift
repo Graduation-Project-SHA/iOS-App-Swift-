@@ -29,6 +29,8 @@ class ParamedicTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         DetailsOrOrder.tintColor = UIColor(hex: "E7000B")
+        selectionStyle = .none
+
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

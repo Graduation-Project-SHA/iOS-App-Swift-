@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SearchWithoutFilterViewController">
+            <connections>
+                <outlet property="searchView" destination="r4F-Av-45Y" id="Y0i-A0-i7S"/>
+                <outlet property="txtSearch" destination="rWI-ta-u73" id="e0Q-ep-ZQU"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="345" height="50"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="r4F-Av-45Y" userLabel="searchView">
+                    <rect key="frame" x="0.0" y="0.0" width="345" height="50"/>
+                    <subviews>
+                        <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="بحث" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rWI-ta-u73">
+                            <rect key="frame" x="0.0" y="0.0" width="345" height="50"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <textInputTraits key="textInputTraits"/>
+                        </textField>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IMU-fa-ubd">
+                            <rect key="frame" x="309" y="10.666666666666664" width="28" height="29"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="29" id="12N-Ej-kiG"/>
+                                <constraint firstAttribute="width" constant="28" id="deC-mu-KtR"/>
+                            </constraints>
+                            <state key="normal" title="Button"/>
+                            <buttonConfiguration key="configuration" style="plain" image="magnifyingglass" catalog="system"/>
+                            <connections>
+                                <action selector="searchButton:" destination="-1" eventType="touchUpInside" id="9AC-Xv-wtQ"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="345" id="1Fy-qJ-w0p"/>
+                        <constraint firstAttribute="height" constant="50" id="2WO-Av-yhs"/>
+                        <constraint firstItem="rWI-ta-u73" firstAttribute="leading" secondItem="r4F-Av-45Y" secondAttribute="leading" id="AfY-38-j1F"/>
+                        <constraint firstAttribute="bottom" secondItem="rWI-ta-u73" secondAttribute="bottom" id="JhR-d1-NHD"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="50" id="MrZ-yv-4Jg"/>
+                        <constraint firstItem="IMU-fa-ubd" firstAttribute="centerY" secondItem="rWI-ta-u73" secondAttribute="centerY" id="TCu-IB-gYc"/>
+                        <constraint firstAttribute="trailing" secondItem="rWI-ta-u73" secondAttribute="trailing" id="YK0-za-4ia"/>
+                        <constraint firstAttribute="trailing" secondItem="IMU-fa-ubd" secondAttribute="trailing" constant="8" id="feh-pe-wGu"/>
+                        <constraint firstItem="rWI-ta-u73" firstAttribute="top" secondItem="r4F-Av-45Y" secondAttribute="top" id="qmw-QY-wVx"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="r4F-Av-45Y" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="BED-Z8-fVB"/>
+                <constraint firstAttribute="trailing" secondItem="r4F-Av-45Y" secondAttribute="trailing" id="BHY-5B-Rvt"/>
+                <constraint firstItem="r4F-Av-45Y" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="XE5-y5-Mya"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="96.946564885496173" y="88.028169014084511"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="magnifyingglass" catalog="system" width="128" height="117"/>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

@@ -2,6 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>نحتاج إلى الوصول الدائم إلى موقعك حتى أثناء عدم استخدام التطبيق لتمكين الميزات التي تعتمد على تحديثات الموقع في الخلفية وضمان عمل الخدمات بشكل مستمر.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>نحتاج إلى الوصول إلى موقعك أثناء استخدام التطبيق لتقديم خدمات مخصصة تعتمد على موقعك الحالي وتحسين تجربة المستخدم.</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

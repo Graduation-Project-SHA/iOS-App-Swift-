@@ -19,6 +19,7 @@ class CallConfirmViewController: UIViewController {
     
     @IBOutlet weak var importantInformationHeight: NSLayoutConstraint!
     
+    @IBOutlet weak var connectionView: UIView!
     
     @IBOutlet weak var importantInfo2: UIView!
     
@@ -67,6 +68,12 @@ class CallConfirmViewController: UIViewController {
         importantInformationView.layer.masksToBounds = true
         importantInformationView.layer.borderWidth = 1
         importantInformationView.layer.borderColor = UIColor(hex: "BEDBFF").cgColor
+        
+
+        connectionView.layer.cornerRadius = 15
+        connectionView.layer.masksToBounds = true
+        connectionView.layer.borderWidth = 1
+        connectionView.layer.borderColor = UIColor(hex: "BEDBFF").cgColor
         
 
         
@@ -238,6 +245,18 @@ class CallConfirmViewController: UIViewController {
         // هنا بعدين تفتح الـ image picker أو أي منطق تبيه
         print("Send photo tapped")
     }
+    
+    @IBAction func backbutton(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "Emergency") as? EmergencyViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: false)
+        }
+        
+    }
+
 }
 
 extension CallConfirmViewController: UITableViewDelegate, UITableViewDataSource {
@@ -315,20 +334,3 @@ extension CallConfirmViewController : UITextFieldDelegate{
 
 
 
-struct message {
-    var image: UIImage?
-    var sender: String
-    var body: String
-    var date: Date
-}
-
-struct Mymessage {
-    var body: String
-    var date: Date
-    var seen: Bool
-}
-
-enum ChatRow {
-    case me(Mymessage)
-    case other(message)
-}

@@ -49,6 +49,16 @@ class EmergencyViewController: UIViewController {
         }
 
     }
-    
+    @IBAction func backbutton(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "HospitalDetails") as? HospitalDetailsViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: false)
+        }
+        
+    }
+
 
 }

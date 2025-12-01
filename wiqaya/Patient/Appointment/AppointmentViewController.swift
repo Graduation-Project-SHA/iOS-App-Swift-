@@ -30,8 +30,28 @@ class AppointmentViewController: UIViewController {
         myTableView.separatorStyle = .none
     }
     
+    @IBAction func backbutton(_ sender: Any) {
+        dismiss(animated: true)
+        
+    }
+
+    
     func setUpArray() {
         array = [
+            Item(status: UIImage(named: "canceled")!,
+                 image: UIImage(named: "Doctor")!,
+                 name: "د. احمد",
+                 speciality: "اسنان"),
+            
+            Item(status: UIImage(named: "canceled")!,
+                 image: UIImage(named: "Doctor")!,
+                 name: "د. عمر",
+                 speciality: "عيون"),
+            
+            Item(status: UIImage(named: "completed")!,
+                 image: UIImage(named: "Doctor")!,
+                 name: "د. ناصر",
+                 speciality: "انف و اذن و حنجرة"),
             Item(status: UIImage(named: "canceled")!,
                  image: UIImage(named: "Doctor")!,
                  name: "د. احمد",

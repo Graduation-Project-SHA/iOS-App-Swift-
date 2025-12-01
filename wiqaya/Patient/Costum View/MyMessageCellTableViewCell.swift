@@ -25,7 +25,13 @@ class MyMessageCellTableViewCell: UITableViewCell {
             .layerMinXMinYCorner, // فوق يسار
             .layerMaxXMinYCorner, // فوق يمين
             .layerMinXMaxYCorner  // تحت يسار
+            
         ]
+        lblmsg.numberOfLines = 0
+        
+        let maxWidth = UIScreen.main.bounds.width * 0.7  // 70% من عرض الشاشة
+        lblmsg.widthAnchor.constraint(lessThanOrEqualToConstant: maxWidth).isActive = true
+
         msgView.layer.masksToBounds = true   // عشان يطبق الـ cornerRadius
 
     }

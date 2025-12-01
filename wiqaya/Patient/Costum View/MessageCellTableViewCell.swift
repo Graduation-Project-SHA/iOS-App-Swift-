@@ -28,6 +28,10 @@ class MessageCellTableViewCell: UITableViewCell {
             .layerMaxXMaxYCorner  // تحت يمين
         ]
         bodyView.clipsToBounds = true
+        lblMsg.numberOfLines = 0
+        
+        let maxWidth = UIScreen.main.bounds.width * 0.7  // 70% من عرض الشاشة
+        lblMsg.widthAnchor.constraint(lessThanOrEqualToConstant: maxWidth).isActive = true
 
 
     }
