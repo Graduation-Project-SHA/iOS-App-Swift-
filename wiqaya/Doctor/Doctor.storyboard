@@ -3522,7 +3522,7 @@
                                 <rect key="frame" x="0.0" y="103" width="393" height="666"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C9y-4D-5E3">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="1300"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="393" height="1400"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="اختيار ايام العمل" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ohv-Ny-5fW">
                                                 <rect key="frame" x="50" y="40" width="327" height="24"/>
@@ -4092,6 +4092,24 @@
                                                     </tableViewCell>
                                                 </prototypes>
                                             </tableView>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k5O-DC-Pr9">
+                                                <rect key="frame" x="16" y="1274" width="361" height="55"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="55" id="7gU-fg-QdM"/>
+                                                </constraints>
+                                                <color key="tintColor" red="0.16862747073173523" green="0.45098042488098145" blue="0.9529411792755127" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled">
+                                                    <attributedString key="attributedTitle">
+                                                        <fragment content="حفظ التعديلات">
+                                                            <attributes>
+                                                                <font key="NSFont" size="17" name="GeezaPro-Bold"/>
+                                                                <font key="NSOriginalFont" size="12" name="Helvetica"/>
+                                                            </attributes>
+                                                        </fragment>
+                                                    </attributedString>
+                                                </buttonConfiguration>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
@@ -4099,6 +4117,7 @@
                                             <constraint firstItem="OjC-Q0-F8R" firstAttribute="top" secondItem="ohv-Ny-5fW" secondAttribute="bottom" constant="31" id="2JE-h6-wFB"/>
                                             <constraint firstItem="qv2-WZ-beP" firstAttribute="top" secondItem="Mg6-mi-MG5" secondAttribute="bottom" constant="24" id="2qG-NE-Jcf"/>
                                             <constraint firstItem="Mg6-mi-MG5" firstAttribute="leading" secondItem="C9y-4D-5E3" secondAttribute="leading" constant="50" id="37P-h1-XyU"/>
+                                            <constraint firstItem="k5O-DC-Pr9" firstAttribute="leading" secondItem="C9y-4D-5E3" secondAttribute="leading" constant="16" id="6yh-TM-ddI"/>
                                             <constraint firstAttribute="trailing" secondItem="ohv-Ny-5fW" secondAttribute="trailing" constant="16" id="80y-dB-6W3"/>
                                             <constraint firstItem="dal-BC-v0D" firstAttribute="leading" secondItem="DTZ-Sl-W0L" secondAttribute="trailing" constant="9" id="Aox-s8-R9i"/>
                                             <constraint firstItem="dal-BC-v0D" firstAttribute="top" secondItem="OjC-Q0-F8R" secondAttribute="bottom" constant="8" symbolic="YES" id="BDO-7e-amz"/>
@@ -4109,6 +4128,7 @@
                                             <constraint firstAttribute="trailing" secondItem="dal-BC-v0D" secondAttribute="trailing" constant="16" id="HjT-DA-AeM"/>
                                             <constraint firstAttribute="trailing" secondItem="hfw-SS-twM" secondAttribute="trailing" constant="16" id="KFe-gJ-XOD"/>
                                             <constraint firstItem="hfw-SS-twM" firstAttribute="top" secondItem="urK-Py-Gvy" secondAttribute="bottom" constant="8" symbolic="YES" id="Lz7-Et-vJg"/>
+                                            <constraint firstAttribute="trailing" secondItem="k5O-DC-Pr9" secondAttribute="trailing" constant="16" id="OUc-nI-ENR"/>
                                             <constraint firstAttribute="trailing" secondItem="OjC-Q0-F8R" secondAttribute="trailing" constant="16" id="PS6-hB-C8e"/>
                                             <constraint firstItem="DgL-Vz-MsH" firstAttribute="top" secondItem="PgG-o8-BTL" secondAttribute="bottom" constant="25" id="RSy-i6-mf3"/>
                                             <constraint firstItem="uwe-1E-EYt" firstAttribute="leading" secondItem="C9y-4D-5E3" secondAttribute="leading" constant="16" id="TiZ-pN-91S"/>
@@ -4116,6 +4136,7 @@
                                             <constraint firstItem="n4R-UT-cn4" firstAttribute="top" secondItem="DTZ-Sl-W0L" secondAttribute="bottom" constant="8" symbolic="YES" id="Vpk-Ut-tj3"/>
                                             <constraint firstAttribute="trailing" secondItem="urK-Py-Gvy" secondAttribute="trailing" constant="16" id="XNb-TQ-lB2"/>
                                             <constraint firstAttribute="trailing" secondItem="PgG-o8-BTL" secondAttribute="trailing" constant="16" id="Xga-Vi-ueN"/>
+                                            <constraint firstItem="k5O-DC-Pr9" firstAttribute="top" secondItem="qv2-WZ-beP" secondAttribute="bottom" constant="45" id="XmT-fY-2UM"/>
                                             <constraint firstItem="n4R-UT-cn4" firstAttribute="leading" secondItem="C9y-4D-5E3" secondAttribute="leading" constant="16" id="azD-nn-PVF"/>
                                             <constraint firstItem="urK-Py-Gvy" firstAttribute="leading" secondItem="n4R-UT-cn4" secondAttribute="trailing" constant="9" id="cqB-iN-y92"/>
                                             <constraint firstItem="uwe-1E-EYt" firstAttribute="top" secondItem="ohv-Ny-5fW" secondAttribute="bottom" constant="31" id="crm-ka-eWu"/>
@@ -4125,7 +4146,7 @@
                                             <constraint firstItem="DTZ-Sl-W0L" firstAttribute="leading" secondItem="C9y-4D-5E3" secondAttribute="leading" constant="16" id="pdW-im-gP2"/>
                                             <constraint firstItem="qv2-WZ-beP" firstAttribute="leading" secondItem="C9y-4D-5E3" secondAttribute="leading" constant="16" id="pg0-Hm-k8c"/>
                                             <constraint firstItem="hfw-SS-twM" firstAttribute="leading" secondItem="C9y-4D-5E3" secondAttribute="leading" constant="16" id="qfB-3w-9af"/>
-                                            <constraint firstAttribute="height" constant="1300" id="vbC-2D-Du1"/>
+                                            <constraint firstAttribute="height" constant="1400" id="vbC-2D-Du1"/>
                                             <constraint firstItem="ohv-Ny-5fW" firstAttribute="top" secondItem="C9y-4D-5E3" secondAttribute="top" constant="40" id="yJz-CW-lAd"/>
                                         </constraints>
                                     </view>

@@ -92,16 +92,16 @@ class AvailableAppointmentsViewController: UIViewController {
         tableViewSummary.delegate = self
         tableViewSummary.dataSource = self
         heightTableViewWork.constant = 50
-        heightAllView.constant = 800
+        heightAllView.constant = 900
 
     }
     func updateDaysHeight() {
         if selectedDays.isEmpty {
             heightTableViewWork.constant = 50
-            heightAllView.constant = 800
+            heightAllView.constant = 900
         } else {
             heightTableViewWork.constant = 450
-            heightAllView.constant = 1300
+            heightAllView.constant = 1400
 
         }
         UIView.animate(withDuration: 0.25) {
