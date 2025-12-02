@@ -53,12 +53,17 @@ class DailyWorkingTableViewCell: UITableViewCell, UITableViewDelegate, UITableVi
     
     // MARK: - UITableView DataSource & Delegate
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
         return array.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DailayTimeTableViewCell", for: indexPath) as! DailayTimeTableViewCell
-        let item = array[indexPath.row]
+        
+        let item = array[indexPath.section]   // ← المهم
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         
@@ -73,7 +78,7 @@ class DailyWorkingTableViewCell: UITableViewCell, UITableViewDelegate, UITableVi
         return cell
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 5   // تقدر تغيّرها حسب ما يعجبك
+        return 1   // تقدر تغيّرها حسب ما يعجبك
     }
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 0.00000001
@@ -90,17 +95,20 @@ class DailyWorkingTableViewCell: UITableViewCell, UITableViewDelegate, UITableVi
 extension DailyWorkingTableViewCell: DailayTimeTableViewCellDelegate {
     func didTapDelete(in cell: DailayTimeTableViewCell) {
         guard let indexPath = tableViewDailayTimeWorking.indexPath(for: cell) else { return }
-        array.remove(at: indexPath.row)
-        tableViewDailayTimeWorking.deleteRows(at: [indexPath], with: .automatic)
+        
+        array.remove(at: indexPath.section)
+        
+        tableViewDailayTimeWorking.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)
+        
         delegate?.didUpdateTimes(for: dayIndex, times: array)
     }
-    
+
     func didChangeTime(in cell: DailayTimeTableViewCell, from: Date, to: Date) {
         guard let indexPath = tableViewDailayTimeWorking.indexPath(for: cell) else { return }
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
-        array[indexPath.row].from = formatter.string(from: from)
-        array[indexPath.row].to = formatter.string(from: to)
+        array[indexPath.section].from = formatter.string(from: from)
+        array[indexPath.section].to = formatter.string(from: to)
         delegate?.didUpdateTimes(for: dayIndex, times: array)
     }
 }

@@ -209,6 +209,16 @@ class HomeDoctorViewController: UIViewController {
         period = sender.currentTitle ?? ""
         print(period)
     }
+    @IBAction func allAppointmentButton(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Doctor", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "BookingForDoctor") as? BookingForDoctorViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: true)
+        }
+        
+    }
     
     // MARK: - Filter UI Update
     func setFilter(selected: UIButton?) {

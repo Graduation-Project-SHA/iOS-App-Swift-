@@ -33,11 +33,25 @@ class ProfileViewController: UIViewController {
         edit.clipsToBounds = true
         edit.layer.borderWidth = 1
         edit.layer.borderColor = UIColor(hex: "FFFFFF").cgColor
-
-        
-        
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemBlue
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+        appearance.shadowColor = .clear        // أهم واحدة
+        appearance.shadowImage = UIImage()     // بعض الأنظمة تحتاجها
 
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance = appearance
+        
+        navigationItem.title = "حسابى"
+    }
 
 }

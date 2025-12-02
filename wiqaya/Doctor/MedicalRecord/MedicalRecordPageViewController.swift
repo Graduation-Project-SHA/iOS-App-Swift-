@@ -98,8 +98,6 @@ extension MedicalRecordPageViewController: UITableViewDelegate, UITableViewDataS
         }else{
             return medicalRecordArray.count
         }
-
-        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -146,7 +146,9 @@ class AvailableAppointmentsViewController: UIViewController {
         appearance.titleTextAttributes = [
             .foregroundColor: UIColor.black  // ← اختار اللون اللي تريده
         ]
-        
+        appearance.shadowColor = .clear        // أهم واحدة
+        appearance.shadowImage = UIImage()     // بعض الأنظمة تحتاجها
+
         navigationItem.standardAppearance = appearance
         navigationItem.scrollEdgeAppearance = appearance
     }
@@ -201,12 +203,15 @@ class AvailableAppointmentsViewController: UIViewController {
 extension AvailableAppointmentsViewController: UITableViewDelegate, UITableViewDataSource, DailyWorkingCellDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    func numberOfSections(in tableView: UITableView) -> Int {
         return selectedDays.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let sortedDays = Array(selectedDays).sorted()
-        let dayIndex = sortedDays[indexPath.row]
+        let dayIndex = sortedDays[indexPath.section]   // ← المهم جداً
         
         if tableView == tableViewDailyWorking {
             let cell = tableView.dequeueReusableCell(withIdentifier: "DailyWorkingTableViewCell", for: indexPath) as! DailyWorkingTableViewCell
@@ -217,9 +222,11 @@ extension AvailableAppointmentsViewController: UITableViewDelegate, UITableViewD
             
             cell.delegate = self
             return cell
-        } else {
+            
+        } else {  // Summary TableView
             let cell = tableView.dequeueReusableCell(withIdentifier: "SummaryTableViewCell", for: indexPath) as! SummaryTableViewCell
             cell.lblDay.text = dayNames[dayIndex]
+            
             if let times = workingTimesByDay[dayIndex], !times.isEmpty {
                 let combined = times.map { "\($0.to) - \($0.from)" }.joined(separator: "\n")
                 cell.time.text = combined
@@ -228,7 +235,6 @@ extension AvailableAppointmentsViewController: UITableViewDelegate, UITableViewD
             }
             return cell
         }
-        
     }
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 5   // تقدر تغيّرها حسب ما يعجبك
