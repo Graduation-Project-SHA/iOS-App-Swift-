@@ -835,6 +835,8 @@ class LogIngVC: UIViewController {
             }
         }
     }
+    
+    
     private func goToHomeScreen(titile:String , supTitle:String , msg:String) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let homeVC = storyboard.instantiateViewController(withIdentifier: "Success") as? SuccessVC {
