@@ -184,7 +184,6 @@ extension fourthPageInThirdStageViewController: AVCapturePhotoCaptureDelegate {
             
             // Evaluate photo quality
             let isPhotoPerfect = evaluatePhotoQuality(image: image)
-            
             if isPhotoPerfect {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                     self.performSegue(withIdentifier: "goToCkeckingPage", sender: self)
