@@ -7,13 +7,42 @@
 
 import UIKit
 
-class PaymentMethodViewController: UIViewController {
+class PaymentMethodViewController: UIViewController, UIGestureRecognizerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = true
+        
+        // نخلي الكنترولر الحالي هو الـ delegate
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
 
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemBlue
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.white,
+            .font: UIFont.systemFont(ofSize: 17, weight: .semibold)
+        ]
+        appearance.shadowColor = .clear        // أهم واحدة
+        appearance.shadowImage = UIImage()     // بعض الأنظمة تحتاجها
+        
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance = appearance
+        
+        navigationItem.title = "طرق الدفع"
+
+        self.tabBarController?.tabBar.isHidden = true
+    }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+    }
+
 
 
 }

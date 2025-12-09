@@ -25,6 +25,10 @@ class PatiantProfileViewController: UIViewController, UIImagePickerControllerDel
         
         PatiantImage.layer.cornerRadius = PatiantImage.bounds.width / 2
         PatiantImage.clipsToBounds = true
+        PatiantImage.layer.borderWidth = 1
+        PatiantImage.layer.borderColor = UIColor(hex: "FFFFFF").cgColor
+
+        
         
         edit.layer.cornerRadius = edit.bounds.width / 2
         edit.clipsToBounds = true

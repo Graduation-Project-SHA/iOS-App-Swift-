@@ -29,6 +29,11 @@ class ProfileViewController: UIViewController {
         
         doctorImage.layer.cornerRadius = doctorImage.bounds.width / 2
         doctorImage.clipsToBounds = true
+        doctorImage.layer.borderWidth = 1
+        doctorImage.layer.borderColor = UIColor(hex: "FFFFFF").cgColor
+
+        
+        
         edit.layer.cornerRadius = edit.bounds.width / 2
         edit.clipsToBounds = true
         edit.layer.borderWidth = 1
