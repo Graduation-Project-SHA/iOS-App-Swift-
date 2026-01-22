@@ -275,6 +275,11 @@ class GeneralMedicalRecordViewController: UIViewController, UITableViewDelegate,
         }
         return cell
     }
+    @IBAction func backButton(_ sender: Any) {
+        dismiss(animated: true)
+        
+    }
+
 }
 
 // MARK: - Model

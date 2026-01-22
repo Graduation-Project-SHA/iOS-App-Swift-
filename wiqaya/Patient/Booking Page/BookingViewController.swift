@@ -16,6 +16,9 @@ class BookingViewController: UIViewController {
     
     
     
+    
+    
+    
     var selectedMorningIndexPath: IndexPath?
     var selectedEveningIndexPath: IndexPath?
     
@@ -155,12 +158,17 @@ extension BookingViewController: UICollectionViewDataSource, UICollectionViewDel
             if let oldIndex = selectedDayIndexPath,
                let oldCell = collectionView.cellForItem(at: oldIndex) as? DayCollectionViewCell {
                 oldCell.containerView.backgroundColor = .white
+                oldCell.day.textColor = .black
+                oldCell.dateDay.textColor = .black
             }
             
             selectedDayIndexPath = indexPath
             
             if let cell = collectionView.cellForItem(at: indexPath) as? DayCollectionViewCell {
                 cell.containerView.backgroundColor = UIColor(hex: "#2B73F3")
+                cell.day.textColor = .white
+                cell.dateDay.textColor = .white
+                
             }
             
         } else if collectionView == morningCollectionView {
@@ -168,6 +176,7 @@ extension BookingViewController: UICollectionViewDataSource, UICollectionViewDel
             if let oldIndex = selectedMorningIndexPath,
                let oldCell = collectionView.cellForItem(at: oldIndex) as? MorningCollectionViewCell {
                 oldCell.backgroundColor = .white
+                oldCell.clock.textColor = .black
                 collectionView.deselectItem(at: oldIndex, animated: false)
             }
             
@@ -175,6 +184,7 @@ extension BookingViewController: UICollectionViewDataSource, UICollectionViewDel
             if let eveningIndex = selectedEveningIndexPath,
                let eveningCell = eveningCollectionView.cellForItem(at: eveningIndex) as? EveningCollectionViewCell {
                 eveningCell.backgroundColor = .white
+                eveningCell.clock.textColor = .black
                 eveningCollectionView.deselectItem(at: eveningIndex, animated: false)
             }
             selectedEveningIndexPath = nil
@@ -184,6 +194,7 @@ extension BookingViewController: UICollectionViewDataSource, UICollectionViewDel
             
             if let cell = collectionView.cellForItem(at: indexPath) as? MorningCollectionViewCell {
                 cell.backgroundColor = UIColor(hex: "#2B73F3")
+                cell.clock.textColor = .white
             }
             
         } else if collectionView == eveningCollectionView {
@@ -191,6 +202,7 @@ extension BookingViewController: UICollectionViewDataSource, UICollectionViewDel
             if let oldIndex = selectedEveningIndexPath,
                let oldCell = collectionView.cellForItem(at: oldIndex) as? EveningCollectionViewCell {
                 oldCell.backgroundColor = .white
+                oldCell.clock.textColor = .black
                 collectionView.deselectItem(at: oldIndex, animated: false)
             }
             
@@ -198,6 +210,7 @@ extension BookingViewController: UICollectionViewDataSource, UICollectionViewDel
             if let morningIndex = selectedMorningIndexPath,
                let morningCell = morningCollectionView.cellForItem(at: morningIndex) as? MorningCollectionViewCell {
                 morningCell.backgroundColor = .white
+                morningCell.clock.textColor = .black
                 morningCollectionView.deselectItem(at: morningIndex, animated: false)
             }
             selectedMorningIndexPath = nil
@@ -207,6 +220,7 @@ extension BookingViewController: UICollectionViewDataSource, UICollectionViewDel
             
             if let cell = collectionView.cellForItem(at: indexPath) as? EveningCollectionViewCell {
                 cell.backgroundColor = UIColor(hex: "#2B73F3")
+                cell.clock.textColor = .white
             }
         }
     }

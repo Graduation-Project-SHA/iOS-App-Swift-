@@ -108,6 +108,11 @@ class LanguageViewController: UIViewController, UIGestureRecognizerDelegate {
         myTableView.reloadData()
     }
 
+    @IBAction func backButton(_ sender: Any) {
+        dismiss(animated: true)
+        
+    }
+
 }
 extension LanguageViewController : UITableViewDelegate, UITableViewDataSource {
     

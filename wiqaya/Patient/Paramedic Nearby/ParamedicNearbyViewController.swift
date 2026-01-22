@@ -491,10 +491,10 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
     }
 }
 
-struct ItemHospital {
-    var name : String
-    var address : String
-    var lblAddressCar : String
-    var lblAddress : String
-    var lblDistance : String
-}
+//struct ItemHospital {
+//    var name : String
+//    var address : String
+//    var lblAddressCar : String
+//    var lblAddress : String
+//    var lblDistance : String
+//}

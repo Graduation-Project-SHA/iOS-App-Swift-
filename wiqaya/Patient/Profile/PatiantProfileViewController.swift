@@ -54,6 +54,10 @@ class PatiantProfileViewController: UIViewController, UIImagePickerControllerDel
         navigationItem.compactAppearance = appearance
         
         navigationItem.title = "حسابى"
+        if let img = UserData1.shared.profileImage {
+            PatiantImage.image = img
+        }
+
     }
     
     @IBAction func editButton(_ sender: Any) {
@@ -72,8 +76,12 @@ class PatiantProfileViewController: UIViewController, UIImagePickerControllerDel
         
         if let editedImage = info[.editedImage] as? UIImage {
             PatiantImage.image = editedImage
+            UserData1.shared.profileImage = editedImage   // 👈 نخزن في الموديل مباشرة
+
         } else if let originalImage = info[.originalImage] as? UIImage {
             PatiantImage.image = originalImage
+            UserData1.shared.profileImage = originalImage // 👈 نخزن في الموديل مباشرة
+
         }
         
         picker.dismiss(animated: true, completion: nil)
@@ -81,5 +89,12 @@ class PatiantProfileViewController: UIViewController, UIImagePickerControllerDel
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func settingButton(_ sender: Any) {
+        let vc = storyboard?.instantiateViewController(withIdentifier: "Setting") as! SettingViewController
+        vc.isFromTabBar = false
+        navigationController?.pushViewController(vc, animated: true)
+
     }
 }

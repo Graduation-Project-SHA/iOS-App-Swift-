@@ -26,6 +26,9 @@ class DayCollectionViewCell: UICollectionViewCell {
         // لون عند التحديد
         let selectedView = UIView(frame: bounds)
         selectedView.backgroundColor = UIColor(hex: "#2B73F3")
+//        day.textColor = .white
+//        dateDay.textColor = .white
+        
         self.selectedBackgroundView = selectedView
     }
 

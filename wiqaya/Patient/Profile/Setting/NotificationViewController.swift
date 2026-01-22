@@ -44,6 +44,10 @@ class NotificationViewController: UIViewController, UIGestureRecognizerDelegate 
         self.tabBarController?.tabBar.isHidden = false
     }
 
+    @IBAction func backButton(_ sender: Any) {
+        dismiss(animated: true)
+        
+    }
 
 
 }

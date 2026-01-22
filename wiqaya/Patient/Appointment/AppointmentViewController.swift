@@ -19,12 +19,14 @@ class AppointmentViewController: UIViewController {
     
     @IBOutlet weak var myTableView: UITableView!
     
+    @IBOutlet weak var myScroll: UIScrollView!
     var array = [Item]()
     override func viewDidLoad() {
         super.viewDidLoad()
         myTableView.delegate = self
         myTableView.dataSource = self
         completedView.isHidden = true
+        
         setUpArray()
         nextAppointment()
         myTableView.separatorStyle = .none
@@ -90,6 +92,8 @@ class AppointmentViewController: UIViewController {
         
         completedView.isHidden = true
         contentView.isHidden = false
+        myScroll.isHidden = false
+        
         
         let searchVC = ComingDatesViewController(nibName: "ComingDatesViewController", bundle: nil)
         addChild(searchVC)
@@ -101,6 +105,7 @@ class AppointmentViewController: UIViewController {
     private func previousAppointment() {
         completedView.isHidden = false
         contentView.isHidden = true
+        myScroll.isHidden = true
         myTableView.reloadData()
     }
 
