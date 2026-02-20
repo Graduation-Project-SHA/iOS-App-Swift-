@@ -47,7 +47,6 @@ class EmergencyViewController: UIViewController {
             loginVC.modalTransitionStyle = .crossDissolve
             present(loginVC, animated: false)
         }
-
     }
     @IBAction func backbutton(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Patient", bundle: nil)

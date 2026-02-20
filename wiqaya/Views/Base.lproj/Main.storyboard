@@ -1077,8 +1077,23 @@
                                                                 </constraints>
                                                                 <menu key="menu" id="mej-Du-vRQ">
                                                                     <children>
-                                                                        <command title="Item 1" id="PCo-Nf-8Fj"/>
-                                                                        <command title="Item 2" id="jpy-cE-Fkp"/>
+                                                                        <command title="الباطنة" id="PCo-Nf-8Fj"/>
+                                                                        <command title="القلب" id="jpy-cE-Fkp"/>
+                                                                        <command title="الجلدية" id="Amu-jY-jIQ"/>
+                                                                        <command title="العظام" id="ArG-0v-E2X"/>
+                                                                        <command title="الأطفال" id="y17-YP-kqj"/>
+                                                                        <command title="النساء والتوليد" id="ojc-BF-l46"/>
+                                                                        <command title="العيون" id="Tox-Qv-hnG"/>
+                                                                        <command title="الأنف والأذن والحنجرة" id="vnS-Fz-exm"/>
+                                                                        <command title="الأسنان" id="V7v-fW-rJg"/>
+                                                                        <command title="الأعصاب" id="AEy-iZ-fkn"/>
+                                                                        <command title="الطب النفسي" id="aO1-42-rmJ"/>
+                                                                        <command title="الجراحة العامة" id="Sea-qd-338"/>
+                                                                        <command title="المسالك البولية" id="Aaq-ks-fZa"/>
+                                                                        <command title="العلاج الطبيعي" id="HG6-6Q-GcD"/>
+                                                                        <command title="التغذية" id="QB8-1H-NgV"/>
+                                                                        <command title="طب الأورام" id="rT7-c7-dIp"/>
+                                                                        <command title="الأشعة" id="neP-f2-Bi7"/>
                                                                     </children>
                                                                 </menu>
                                                                 <state key="normal" title="Button" image="chevron.down" catalog="system"/>
@@ -1280,9 +1295,11 @@
                         <outlet property="PassView" destination="Wpt-B4-HFr" id="95m-SO-vUB"/>
                         <outlet property="authView" destination="Jky-SL-6Cw" id="bfR-Q9-La4"/>
                         <outlet property="backStage" destination="rOR-JN-yVA" id="pUw-8E-33L"/>
+                        <outlet property="bioLbl" destination="gpt-RA-Jdq" id="IC1-Bh-1ug"/>
                         <outlet property="completionStageImage" destination="uXL-Sv-pa7" id="wLZ-yi-cd3"/>
                         <outlet property="countryImage" destination="hJZ-HI-Ala" id="71J-rV-Wpl"/>
                         <outlet property="doctor" destination="m0K-aC-sYY" id="Oe9-mN-hn5"/>
+                        <outlet property="doctorLocation" destination="RcN-Jf-Ozl" id="9AX-hA-oWe"/>
                         <outlet property="errorMsg" destination="Syb-ZC-65R" id="hGi-Ys-WqB"/>
                         <outlet property="errorRegisterMsg" destination="ndO-HH-mHK" id="foX-aH-Gi4"/>
                         <outlet property="firstName" destination="cHT-E2-FO1" id="AKt-Tc-hPb"/>
@@ -1318,6 +1335,7 @@
                         <outlet property="normalUser" destination="pFd-H9-7qy" id="9uX-GH-cle"/>
                         <outlet property="passRegisterView" destination="rCM-iT-fLM" id="ZrA-6d-znx"/>
                         <outlet property="phoneRegisterView" destination="5QT-er-6tn" id="TMF-DL-4t0"/>
+                        <outlet property="practicalExperienceLbl" destination="30f-uu-yDT" id="ofj-jZ-tXX"/>
                         <outlet property="pullbutton" destination="SpL-qK-AiJ" id="AXd-Wh-SUL"/>
                         <outlet property="rememberMe" destination="pxP-cX-iFC" id="OBh-Vz-aZN"/>
                         <outlet property="secondStageView" destination="EKc-ER-Xs3" id="68b-vA-vP4"/>
@@ -1326,6 +1344,8 @@
                         <outlet property="showPassConfirmPassRegister" destination="avG-rk-OTx" id="E8J-LK-iOP"/>
                         <outlet property="showPassRegister" destination="c9A-XU-03j" id="Tic-CN-Q4Y"/>
                         <outlet property="signUp" destination="hvo-Ym-dkA" id="Atw-oX-5we"/>
+                        <outlet property="specializationLbl" destination="sk3-iB-M2R" id="IF7-MK-C5U"/>
+                        <outlet property="specializationPull" destination="K0o-SY-k3B" id="hda-gn-7I6"/>
                         <outlet property="textEmail" destination="9IQ-oC-Qn5" id="Efo-sG-2aM"/>
                         <outlet property="textPass" destination="Z7c-LA-dfE" id="RUG-Oy-MAb"/>
                         <outlet property="topRegisterView" destination="oeC-Jn-vmk" id="VtW-vv-4jI"/>

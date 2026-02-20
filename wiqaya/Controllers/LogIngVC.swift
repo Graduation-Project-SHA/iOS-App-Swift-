@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import CoreLocation
 import MapKit
 import IQKeyboardManagerSwift
 
-class LogIngVC: UIViewController {
+class LogIngVC: UIViewController, CLLocationManagerDelegate {
     
     var iAmDoctor: Bool = false
     var gend: Bool = false
@@ -18,17 +19,17 @@ class LogIngVC: UIViewController {
     var country: String = ""
     var phoneCode: String = ""
     var myDate : String = ""
-    var isDoctor: String = "Patient"
+    var isDoctor: String = "USER"
     var gender: String = ""
     var userName: String = ""
     var key : String = "+20"
     var formatphone : String = ""
     
     let api = APIService()
-
+    
     // MARK: - Login as User and Doctor View
-
-
+    
+    
     @IBOutlet weak var logo: UILabel!
     @IBOutlet weak var lblStartNow: UILabel!
     @IBOutlet weak var lblMarketing: UILabel!
@@ -49,7 +50,7 @@ class LogIngVC: UIViewController {
     @IBOutlet weak var textEmail: UITextField!
     @IBOutlet weak var textPass: UITextField!
     @IBOutlet weak var showPass: UIButton!
-
+    
     @IBOutlet weak var errorMsg: UILabel!
     
     
@@ -62,7 +63,11 @@ class LogIngVC: UIViewController {
         UIImage(named: "complate2")!,
         UIImage(named: "complate3")!
     ]
-
+    
+    let locationManager = CLLocationManager()
+    
+    var currentLat: String?
+    var currentLon: String?
 
     @IBOutlet weak var completionStageImage: UIImageView!
     
@@ -76,10 +81,21 @@ class LogIngVC: UIViewController {
     
     @IBOutlet weak var backStage: UIButton!
     
+    @IBOutlet weak var doctorLocation: MKMapView!
+    
+    @IBOutlet weak var specializationPull: UIButton!
+    
+    @IBOutlet weak var specializationLbl: UILabel!
+    
+    @IBOutlet weak var bioLbl: UITextView!
+    
+    @IBOutlet weak var practicalExperienceLbl: UITextField!
+    
+    
     
     
     // MARK: - Register as User View
-
+    
     
     @IBOutlet weak var myScrollView: UIScrollView!
     
@@ -117,7 +133,7 @@ class LogIngVC: UIViewController {
     @IBOutlet weak var pullbutton: UIButton!
     
     @IBOutlet weak var countryImage: UIImageView!
-
+    
     
     
     
@@ -184,26 +200,41 @@ class LogIngVC: UIViewController {
     @IBOutlet weak var markUnallowedSymbols: UIImageView!
     
     @IBOutlet weak var errorRegisterMsg: UILabel!
-
+    
+    // MARK: - Register as Doctor View
     
     
-
+    
+    
     
     
     let gradient = GradientManager()
     let green = UIColor(named: "AppGreen") ?? .systemGreen
     let red = UIColor(named: "AppRed") ?? .systemRed
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         backStage.isHidden = true
         firstStageView.isHidden = true
         secondStageView.isHidden = true
-
+        
         completionStageImage.isHidden = true
         myScrollView.isHidden = true
         CheckMarkForEmail.isHidden = true
         authView.layer.cornerRadius = 20
+        
+        
+        
+        
+//اعداد صلاحية الموقع 
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
+        doctorLocation.showsUserLocation = true
+
         
         // إعداد مظهر صورة العلم
         countryImage.contentMode = .scaleAspectFit
@@ -215,17 +246,17 @@ class LogIngVC: UIViewController {
         
         // تهيئة القائمة المنسدلة
         configurePullDownButton()
-
         
-//        if var config = forgotPassword.configuration {
-//            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
-//                var outgoing = incoming
-//                outgoing.font = UIFont.systemFont(ofSize: 12)
-//                return outgoing
-//            }
-//            forgotPassword.configuration = config
-//        }
-
+        
+        //        if var config = forgotPassword.configuration {
+        //            config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer { incoming in
+        //                var outgoing = incoming
+        //                outgoing.font = UIFont.systemFont(ofSize: 12)
+        //                return outgoing
+        //            }
+        //            forgotPassword.configuration = config
+        //        }
+        
         // تخصيص الـ Segmented Control
         let normalAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.gray
@@ -287,19 +318,19 @@ class LogIngVC: UIViewController {
         txtPassRegister.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
         txtConfirmPassRegister.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
         txtEmailRegister.addTarget(self, action: #selector(textFieldsChanged), for: .editingChanged)
-
+        
         iAmDoctor = false
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         doctor.backgroundColor = .clear
-
+        
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         checkIfUserAlreadyLoggedIn()
-
+        
     }
-
+    
     
     
     
@@ -336,13 +367,13 @@ class LogIngVC: UIViewController {
         let expirationDate = Date(timeIntervalSince1970: exp)
         return Date() < expirationDate
     }
-
+    
     var passError : Bool = true
     @objc func textFieldsChanged(_ sender: UITextField) {
         validatePassword()
         emailValed()
     }
-        
+    
     
     private func emailValed() {
         passError = false
@@ -379,11 +410,11 @@ class LogIngVC: UIViewController {
             passError = true
         }
     }
-
+    
     
     private func validatePassword() {
         passError = false
-
+        
         let password = txtPassRegister.text ?? ""
         let confirmPassword = txtConfirmPassRegister.text ?? ""
         
@@ -430,7 +461,7 @@ class LogIngVC: UIViewController {
         : UIImage(systemName: "xmark.circle.fill")
         
         if !hasStrongMix { passError = true }
-
+        
         
         // الشرط 4: يجب أن تحتوي كلمة المرور على رمز خاص
         let specialCharacters = CharacterSet(charactersIn: "!@#$%^&*()_+=[]{}|\\:;\"'<>,.?/~`")
@@ -443,9 +474,9 @@ class LogIngVC: UIViewController {
         : UIImage(systemName: "xmark.circle.fill")
         
         if !containsSpecial { passError = true }
-
+        
     }
-
+    
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -453,7 +484,7 @@ class LogIngVC: UIViewController {
         // استدعاء الميثود لتطبيق التدرج على خلفية الـ View
         gradient.applySmoothBlueGradient(to: self.view, lightRatio: 0.04, midRatio: 0.09, darkRatio: 0.90)
     }
-
+    
     // MARK: - Configure DropDown Menu
     func configurePullDownButton() {
         // الإجراءات لكل دولة
@@ -499,13 +530,13 @@ class LogIngVC: UIViewController {
         case "Egypt":
             phoneCode = "+20 11 1234 5678"
             key = "+20"
-
+            
             countryImage.image = UIImage(named: "Egypt")
             
         case "United Arab Emirates":
             phoneCode = "+971 50 123 4567"
             key = "+971"
-
+            
             countryImage.image = UIImage(named: "Emirates")
             
         default:
@@ -532,8 +563,8 @@ class LogIngVC: UIViewController {
         print("📱 رقم الهاتف النهائي: \(formatphone)")
         return formatphone
     }
-
-
+    
+    
     
     
     
@@ -546,25 +577,25 @@ class LogIngVC: UIViewController {
         backStage.isHidden = true
         completionStageImage.isHidden = true
         topRegisterView.constant = 24
-
-        isDoctor = "Patient"
+        
+        isDoctor = "USER"
         normalUser.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         doctor.backgroundColor = .clear
         print("normalUserButton")
-
+        
     }
     
     @IBAction func doctorButton(_ sender: UIButton) {
         iAmDoctor = true
         signUp.setTitle("التالي", for: .normal)
-
-        isDoctor = "Doctor"
+        
+        isDoctor = "DOCTOR"
         if !isLoginSelected{
             completionStageImage.isHidden = false
             topRegisterView.constant = 50
         }
-//        myScrollView.isHidden = true
-
+        //        myScrollView.isHidden = true
+        
         doctor.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         normalUser.backgroundColor = .clear
         print("DoctorButton")
@@ -583,44 +614,44 @@ class LogIngVC: UIViewController {
         if sender.selectedSegmentIndex == 1 {
             logInView.isHidden = false
             backStage.isHidden = true
-
+            
             isLoginSelected = true
             print("🔑 تسجيل الدخول")
             myScrollView.isHidden = true
             logInView.isHidden = false
             completionStageImage.isHidden = true
-
-
+            
+            
         } else if sender.selectedSegmentIndex == 0 {
             isLoginSelected = false
-
+            
             print("🆕 إنشاء حساب")
             
             if iAmDoctor {
                 topRegisterView.constant = 50
-
+                
                 logInView.isHidden = true
                 completionStageImage.isHidden = false
                 myScrollView.isHidden = false
                 firstStageView.isHidden = false
-
+                
             }else if !iAmDoctor{
                 firstStageView.isHidden = false
-
+                
                 completionStageImage.isHidden = true
                 topRegisterView.constant = 24
-
+                
                 logInView.isHidden = true
                 myScrollView.isHidden = false
-
+                
             }else{
                 completionStageImage.isHidden = true
-
+                
                 logInView.isHidden = true
                 myScrollView.isHidden = true
             }
         }
-
+        
     }
     
     
@@ -639,7 +670,7 @@ class LogIngVC: UIViewController {
             
             present(ForgotPasswordVC, animated: true, completion: nil)
         }
-
+        
     }
     @IBAction func rememberMeButton(_ sender: UIButton) {
         sender.isSelected.toggle()
@@ -652,7 +683,7 @@ class LogIngVC: UIViewController {
             sender.setImage(UIImage(systemName: "square"), for: .normal)
             print("🔲 Remember Me unselected")
         }
-
+        
     }
     
     
@@ -660,23 +691,23 @@ class LogIngVC: UIViewController {
         
         gend = true
         passError = false
-
+        
         gender = "MALE"
         print(gender)
         man.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         women.backgroundColor = .clear
-
+        
     }
     
     @IBAction func womenButton(_ sender: Any) {
         passError = false
-
+        
         gend = true
         gender = "FEMALE"
         print(gender)
         women.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.15)
         man.backgroundColor = .clear
-
+        
     }
     
     
@@ -706,7 +737,7 @@ class LogIngVC: UIViewController {
         }
         
         // تحديث الأيقونة
-//        let mycolor = UIColor(red: 55/255, green: 132/255, blue: 100/255, alpha: 1.0)
+        //        let mycolor = UIColor(red: 55/255, green: 132/255, blue: 100/255, alpha: 1.0)
         let isHidden = textPass.isSecureTextEntry
         let imageName = isHidden ? "eye.slash" : "eye"
         let iconColor: UIColor = isHidden ? .systemGray3 : .link
@@ -714,7 +745,7 @@ class LogIngVC: UIViewController {
         sender.setImage(image, for: .normal)
     }
     //showPassRegister showPassConfirmPassRegister
-
+    
     @IBAction func showPassRegisterButton(_ sender: UIButton) {
         UIView.animate(withDuration: 0.15,
                        animations: {
@@ -770,7 +801,7 @@ class LogIngVC: UIViewController {
         let iconColor: UIColor = isHidden ? .systemGray3 : .link
         let image = UIImage(systemName: imageName)?.withTintColor(iconColor, renderingMode: .alwaysOriginal)
         sender.setImage(image, for: .normal)
-
+        
     }
     
     
@@ -802,28 +833,32 @@ class LogIngVC: UIViewController {
                     self.errorMsg.textColor = .appGreen
                     
                     print("✅ Login successful!")
-                    print("🔑 Access token: \(response.tokens.accessToken)")
-                    print("👤 name: \(response.date.payload.name)")
-                    print("📧 Email: \(response.date.payload.email)")
-                    print("🧩 Role: \(response.date.payload.role)")
+                    print("🔑 Access token: \(response.data.access_token)")
+                    //                    print("👤 name: \(response.data.payload.name)")
+                    //                    print("📧 Email: \(response.data.payload.email)")
+                    //                    print("🧩 Role: \(response.data.payload.role)")
                     
                     // نحفظ البيانات فقط لو Remember Me مفعّلة
                     if self.isRememberMeSelected {
                         let defaults = UserDefaults.standard
-                        defaults.set(response.tokens.accessToken, forKey: "accessToken")
-                        defaults.set(response.tokens.refreshToken, forKey: "refreshToken")
-                        defaults.set(response.date.payload.name, forKey: "name")
-                        self.userName = response.date.payload.name
-
-                        defaults.set(response.date.payload.email, forKey: "userEmail")
-                        defaults.set(response.date.payload.role, forKey: "userRole")
-
+                        defaults.set(response.data.access_token, forKey: "accessToken")
+                        defaults.set(response.data.refresh_token, forKey: "refreshToken")
+                        //                        defaults.set(response.data.payload.name, forKey: "name")
+                        //                        self.userName = response.data.payload.name
+                        
+                        //                        defaults.set(response.data.payload.email, forKey: "userEmail")
+                        //                        defaults.set(response.data.payload.role, forKey: "userRole")
+                        
                         print("💾 Tokens saved (Remember Me is ON)")
                     } else {
                         print("Tokens not saved (Remember Me is OFF)")
                     }
                     
-                    self.goToHomeScreen(titile: "مرحباً \(self.userName)", supTitle: "تم تسجيل دخولك بنجاح", msg: "")
+                    self.goToHomeScreen(
+                        titile: "مرحباً \(self.userName)",
+                        supTitle: "تم تسجيل دخولك بنجاح",
+                        msg: ""
+                    )
                     
                 case .failure(let error):
                     self.errorMsg.isHidden = false
@@ -889,21 +924,20 @@ class LogIngVC: UIViewController {
             print("🚫 No saved session found, stay on login screen")
         }
     }
-
+    
     // MARK: - Register as User action
     // MARK: - API for Registr As User
     
     @IBAction func dateButton(_ sender: UIDatePicker) {
         let formatter = DateFormatter()
-        
-        // تنسيق السيرفر المطلوب: 1990-03-12T00:00:00.000Z
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(abbreviation: "UTC") // مهم جدًا عشان يضيف Z في الآخر
+        formatter.locale = Locale(identifier: "en_US_POSIX") // مهم عشان الثبات
+        formatter.timeZone = TimeZone(secondsFromGMT: 0) // اختياري
         
-        // تحويل التاريخ من الـ picker إلى String
         myDate = formatter.string(from: sender.date)
-        print(myDate)
-
+        
+        print("DOB:", myDate)  // لازم يطبع 1995-03-12
+        
     }
     @IBAction func createAccButton(_ sender: Any) {
         resetPlaceholdersAndBorders()
@@ -938,14 +972,14 @@ class LogIngVC: UIViewController {
         
         guard !myDate.isEmpty else {
             self.errorRegisterMsg.isHidden = false
-
+            
             errorRegisterMsg.text = "من فضلك اختر تاريخ الميلاد أولاً"
             errorRegisterMsg.textColor = .appRed
             return
         }
         guard !gender.isEmpty else {
             self.errorRegisterMsg.isHidden = false
-
+            
             errorRegisterMsg.text = "من فضلك اختر النوع أولاً"
             errorRegisterMsg.textColor = .appRed
             return
@@ -1025,24 +1059,33 @@ class LogIngVC: UIViewController {
         }else {
             if !passError {
                 // ✅ تأكد إن القيم نظيفة وصحيحة
+                
+                
                 let email = (txtEmailRegister.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
                 let password = txtPassRegister.text ?? ""
                 let name = "\(txtFirstName.text ?? "") \(txtLastName.text ?? "")"
                 let dob = myDate
                 let phone = formatphone
                 let gender = gender
-                let address = country
                 let role = isDoctor
                 
+                
+                print(email)
+                print(password)
+                print(name)
+                print(dob)
+                print(phone)
+                print(gender)
+                print(role)
                 api.signUpUser(
+                    firstName: txtFirstName.text ?? "",
+                    lastName: txtLastName.text ?? "",
                     email: email,
                     password: password,
-                    name: name,
                     phone: phone,
-                    dob: dob,
                     gender: gender,
-                    address: address,
-                    role: role
+                    dateOfBirth: myDate,
+                    role: isDoctor
                 ) { result in
                     DispatchQueue.main.async {
                         switch result {
@@ -1140,9 +1183,57 @@ class LogIngVC: UIViewController {
             }
         }
     }
-
+    
 
     // MARK: - Register as Doctor
+    func locationManager(_ manager: CLLocationManager,
+                         didUpdateLocations locations: [CLLocation]) {
+        
+        guard let location = locations.last else { return }
+        
+        let latitude = location.coordinate.latitude
+        let longitude = location.coordinate.longitude
+        
+        // تخزين القيم
+        currentLat = String(latitude)
+        currentLon = String(longitude)
+        
+        print("Lat: \(latitude)")
+        print("Lon: \(longitude)")
+        
+        // تحريك الماب
+        let region = MKCoordinateRegion(
+            center: location.coordinate,
+            latitudinalMeters: 500,
+            longitudinalMeters: 500
+        )
+        
+        doctorLocation.setRegion(region, animated: true)
+        
+        // لو عايز يوقف التحديث بعد ما يجيب اللوكيشن
+        locationManager.stopUpdatingLocation()
+    }
+
+    public func createAccDoctor(){
+        
+        var email = (txtEmailRegister.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        var password = txtPassRegister.text ?? ""
+        var firstName = txtFirstName.text ?? ""
+        var lastName = txtLastName.text ?? ""
+        var dob = myDate
+        var phone = formatphone
+        var gender = gender
+        var role = isDoctor
+        var specialization = specializationLbl.text ?? ""
+        var bio = bioLbl.text ?? ""
+        var practicalExperience = practicalExperienceLbl.text ?? ""
+        var latitude = currentLat
+        var longitude = currentLon
+    }
+
+    
+    
+    
     @IBAction func bsckStageButton(_ sender: Any) {
 
         if stageNumber == 1{

@@ -11,6 +11,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DonationViewController" customModule="wiqaya" customModuleProvider="target">
             <connections>
+                <outlet property="myTableView" destination="j5d-RT-doN" id="cC5-qO-FyB"/>
+                <outlet property="myView" destination="Ef8-mI-j4C" id="AGl-LQ-M77"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -59,14 +61,95 @@
                                     </constraints>
                                 </containerView>
                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Htw-fR-xVs">
-                                    <rect key="frame" x="0.0" y="50" width="393" height="230"/>
-                                    <color key="backgroundColor" red="0.94117647059999998" green="0.96470588239999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <rect key="frame" x="0.0" y="50" width="393" height="270"/>
+                                    <subviews>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ef8-mI-j4C">
+                                            <rect key="frame" x="24" y="24" width="345" height="241"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="donation" translatesAutoresizingMaskIntoConstraints="NO" id="eoV-mr-bQM">
+                                                    <rect key="frame" x="135" y="12" width="75" height="75"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="75" id="YJN-Nt-xrl"/>
+                                                        <constraint firstAttribute="width" constant="75" id="tmg-jx-zfv"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="احتاج مساعدة" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbY-tt-KiS">
+                                                    <rect key="frame" x="116" y="99" width="113.33333333333331" height="23"/>
+                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="قم بطلب المساعدة اذا كنت بحاجة الي دم او اجهزة طبية" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PRY-hX-4MQ">
+                                                    <rect key="frame" x="8" y="130" width="329" height="46"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="46" id="joQ-gi-wHn"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                    <color key="textColor" red="0.44313725490196076" green="0.44313725490196076" blue="0.47843137254901957" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tM4-Sl-j5b">
+                                                    <rect key="frame" x="12" y="192" width="321" height="39"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="39" id="NDI-mf-q4v"/>
+                                                    </constraints>
+                                                    <color key="tintColor" red="0.2784313725" green="0.52549019610000003" blue="0.96078431369999995" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="filled" title="انشاء طلب"/>
+                                                </button>
+                                            </subviews>
+                                            <color key="backgroundColor" red="0.94117647059999998" green="0.96470588239999999" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <constraints>
+                                                <constraint firstItem="fbY-tt-KiS" firstAttribute="centerX" secondItem="Ef8-mI-j4C" secondAttribute="centerX" id="0cN-P6-p5o"/>
+                                                <constraint firstAttribute="trailing" secondItem="tM4-Sl-j5b" secondAttribute="trailing" constant="12" id="6dv-Aa-rVi"/>
+                                                <constraint firstAttribute="bottom" secondItem="tM4-Sl-j5b" secondAttribute="bottom" constant="10" id="6oK-od-jwI"/>
+                                                <constraint firstItem="eoV-mr-bQM" firstAttribute="top" secondItem="Ef8-mI-j4C" secondAttribute="top" constant="12" id="FVO-U4-RV7"/>
+                                                <constraint firstItem="tM4-Sl-j5b" firstAttribute="top" secondItem="PRY-hX-4MQ" secondAttribute="bottom" constant="16" id="Fij-HE-wdr"/>
+                                                <constraint firstAttribute="trailing" secondItem="PRY-hX-4MQ" secondAttribute="trailing" constant="8" id="OSf-Qm-L6S"/>
+                                                <constraint firstItem="tM4-Sl-j5b" firstAttribute="leading" secondItem="Ef8-mI-j4C" secondAttribute="leading" constant="12" id="XCC-mI-RQm"/>
+                                                <constraint firstItem="eoV-mr-bQM" firstAttribute="centerX" secondItem="Ef8-mI-j4C" secondAttribute="centerX" id="fu2-JH-seh"/>
+                                                <constraint firstItem="PRY-hX-4MQ" firstAttribute="leading" secondItem="Ef8-mI-j4C" secondAttribute="leading" constant="8" id="mAs-do-Y0L"/>
+                                                <constraint firstItem="PRY-hX-4MQ" firstAttribute="top" secondItem="fbY-tt-KiS" secondAttribute="bottom" constant="8" symbolic="YES" id="toC-QO-saj"/>
+                                                <constraint firstItem="fbY-tt-KiS" firstAttribute="top" secondItem="eoV-mr-bQM" secondAttribute="bottom" constant="12" id="yQy-cd-Wgs"/>
+                                            </constraints>
+                                        </view>
+                                    </subviews>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
-                                        <constraint firstAttribute="height" constant="230" id="ANK-y0-N8N"/>
+                                        <constraint firstItem="Ef8-mI-j4C" firstAttribute="leading" secondItem="Htw-fR-xVs" secondAttribute="leading" constant="24" id="0v9-bB-ttO"/>
+                                        <constraint firstAttribute="height" constant="270" id="ANK-y0-N8N"/>
+                                        <constraint firstItem="Ef8-mI-j4C" firstAttribute="top" secondItem="Htw-fR-xVs" secondAttribute="top" constant="24" id="gap-kt-QFE"/>
+                                        <constraint firstAttribute="bottom" secondItem="Ef8-mI-j4C" secondAttribute="bottom" constant="5" id="nin-Ec-sy9"/>
+                                        <constraint firstAttribute="trailing" secondItem="Ef8-mI-j4C" secondAttribute="trailing" constant="24" id="og6-XJ-kkS"/>
+                                    </constraints>
+                                </view>
+                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RNj-yA-coc">
+                                    <rect key="frame" x="0.0" y="320" width="393" height="50"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="تبرعات " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q3U-07-Er7">
+                                            <rect key="frame" x="315.33333333333331" y="14.999999999999998" width="53.666666666666686" height="20.333333333333329"/>
+                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vjG-w7-cKB">
+                                            <rect key="frame" x="16" y="13" width="76" height="29"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <state key="normal" title="Button"/>
+                                            <buttonConfiguration key="configuration" style="plain" title="عرض الكل">
+                                                <fontDescription key="titleFontDescription" type="boldSystem" pointSize="0.0"/>
+                                            </buttonConfiguration>
+                                        </button>
+                                    </subviews>
+                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="50" id="17T-JF-7LF"/>
+                                        <constraint firstItem="Q3U-07-Er7" firstAttribute="centerY" secondItem="RNj-yA-coc" secondAttribute="centerY" id="4N5-ti-2jS"/>
+                                        <constraint firstAttribute="trailing" secondItem="Q3U-07-Er7" secondAttribute="trailing" constant="24" id="G3Z-2f-UFZ"/>
                                     </constraints>
                                 </view>
                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="j5d-RT-doN">
-                                    <rect key="frame" x="0.0" y="280" width="393" height="437"/>
+                                    <rect key="frame" x="0.0" y="370" width="393" height="347"/>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 </tableView>
                             </subviews>
@@ -102,6 +185,7 @@
     </objects>
     <resources>
         <image name="chevron.backward" catalog="system" width="97" height="128"/>
+        <image name="donation" width="85.333335876464844" height="85.333335876464844"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

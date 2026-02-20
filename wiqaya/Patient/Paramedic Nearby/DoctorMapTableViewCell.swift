@@ -9,15 +9,30 @@ import UIKit
 
 class DoctorMapTableViewCell: UITableViewCell {
 
+    @IBOutlet weak var doctorImage: UIImageView!
+    
+    @IBOutlet weak var doctorName: UILabel!
+    
+    @IBOutlet weak var doctorSpecialization: UILabel!
+    
+    @IBOutlet weak var numberOfRate: UILabel!
+    
+    @IBOutlet weak var rate: UILabel!
+    
+    @IBOutlet weak var salary: UILabel!
+    
+    
+    
+    
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 
-        // Configure the view for the selected state
     }
 
 }

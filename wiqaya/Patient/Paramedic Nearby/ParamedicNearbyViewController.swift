@@ -12,14 +12,12 @@ class ParamedicNearbyViewController: UIViewController {
     @IBOutlet weak var GradientView: UIView!
     @IBOutlet weak var searchbar: UIView!
     @IBOutlet weak var myMap: MKMapView!
-    @IBOutlet weak var myTableView: UITableView!
-    @IBOutlet weak var hospitalView: UIView!
     
-    @IBOutlet weak var hospitalBottomConstraint: NSLayoutConstraint!
+    @IBOutlet weak var hospitalButt: UIButton!
+    @IBOutlet weak var doctorButt: UIButton!
     
     private var didSetupPopup = false
     private var isPopupVisible = false
-    var array = [ItemHospital]()
     
     // حالات الـ sheet
     private enum SheetState {
@@ -37,28 +35,43 @@ class ParamedicNearbyViewController: UIViewController {
     
     // عشان نخزن قيمة الكونسـترينت أثناء السحب
     private var panStartConstant: CGFloat = 0
+    private var didShowSheet = false
     
+    var identifierMap : String = ""
     var locationManager = CLLocationManager()
-    var lastLocation : CLLocation?
+    var lastLocation: CLLocation?
     let annotation = MKPointAnnotation()
+    var ishospital : Bool = true
+    var sheet : UIViewController!
+    // ✅ FIX: كان عندك let array = HospitalMapViewController() وده غلط
+    // لازم array يبقى نفس داتا المستشفيات
+    var array: [ItemHospital] = [
+        ItemHospital(name: "مستشفى نور الشروق 1", address: "طريق الشباب", lblAddressCar: "20 دقيقة ", lblAddress: "20 دقيقة", lblDistance: "1.2 كم"),
+        ItemHospital(name: "مستشفى نور الشروق 2", address: "طريق الشباب", lblAddressCar: "25 دقيقة ", lblAddress: "25 دقيقة", lblDistance: "2.3 كم"),
+        ItemHospital(name: "مستشفى نور الشروق 3", address: "طريق الشباب", lblAddressCar: "15 دقيقة ", lblAddress: "15 دقيقة", lblDistance: "0.8 كم")
+    ]
+    
+    // ✅ إحداثيات كل مستشفى بنفس ترتيب array
+    private let hospitalCoordinates: [CLLocationCoordinate2D] = [
+        CLLocationCoordinate2D(latitude: 29.9553802, longitude: 31.0946302),
+        CLLocationCoordinate2D(latitude: 29.955800, longitude: 31.093500),
+        CLLocationCoordinate2D(latitude: 29.956400, longitude: 31.094200)
+    ]
+    
+    // ✅ Added: نمسك Reference للـ sheet VC عشان نتحكم في الجدول/الـ detent
+    private weak var hospitalSheetVC: HospitalMapViewController?
+    private weak var doctorSheetVC: DoctorMapViewController?
+    // ✅ Added: نفس اسم myTableView اللي كنت بتستعمله في didSelect بتاع الخريطة
+    // بس بدل ما يكون Table عندك هنا، بيشير لجدول الشيت
+    private var myTableView: UITableView? {
+        return ishospital ? hospitalSheetVC?.myTableView : doctorSheetVC?.myTableView
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        myTableView.delegate = self
-        myTableView.dataSource = self
+        // ✅ مهم: Delegate للـ Map عشان viewForAnnotation و didSelect يشتغلوا
         myMap.delegate = self
-        implementData()
-        
-        hospitalView.layer.cornerRadius = 20
-        hospitalView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] // زوايا فوق بس
-        hospitalView.layer.masksToBounds = true
-        
-        // shadow بسيط فوق الماب
-        hospitalView.layer.shadowColor = UIColor.black.cgColor
-        hospitalView.layer.shadowOpacity = 0.1
-        hospitalView.layer.shadowRadius = 10
-        hospitalView.layer.shadowOffset = CGSize(width: 0, height: -4)
         
         // searchbar
         searchbar.layer.cornerRadius = 12
@@ -68,49 +81,32 @@ class ParamedicNearbyViewController: UIViewController {
         setStartingLocation()
         addHospitalsAnnotations()   // ⬅️ إضافة الـ annotations
         setupSearchBar()
-        setupSheetPanGesture()
-        addGrabberToSheet()
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.allowsBackgroundLocationUpdates = true
         
-        if islocationservicesavailable(){
+        if islocationservicesavailable() {
             CheckAuthorization()
-        }else{
+        } else {
             showMsg("Please Enable  Location Services")
         }
-        
     }
     
-    func implementData() {
-        array.append(ItemHospital(name: "مستشفى نور الشروق 1", address: "طريق الشباب", lblAddressCar: "20 دقيقة ", lblAddress: "20 دقيقة", lblDistance: "1.2 كم"))
-        array.append(ItemHospital(name: "مستشفى نور الشروق 2", address: "طريق الشباب", lblAddressCar: "25 دقيقة ", lblAddress: "25 دقيقة", lblDistance: "2.3 كم"))
-        array.append(ItemHospital(name: "مستشفى نور الشروق 3", address: "طريق الشباب", lblAddressCar: "15 دقيقة ", lblAddress: "15 دقيقة", lblDistance: "0.8 كم"))
+    // ✅ Added: نخلي الشيت يظهر أول ما الصفحة تفتح (مرة واحدة بس)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateModeButtonsUI()
+
+        if !didShowSheet {
+            didShowSheet = true
+            showHospitalSheet()
+        }
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
         applyAlphaGradientToHeader()
-        
-        // إعداد أوضاع الـ sheet مرة واحدة بس بعد ما كل الـ constraints تظبط
-        if !didSetupPopup {
-            didSetupPopup = true
-            
-            sheetExpandedConstant = 0 // الشيت ملزوق في تحت الشاشة
-            
-            // نخليه يختفي لتحت (ننزله قد ارتفاعه تقريبًا)
-            sheetHiddenConstant = hospitalView.frame.height
-            
-            // medium: قيمة بين 0 و hidden
-            sheetMediumConstant = sheetHiddenConstant * 0.4   // مثلاً 40% من طريق الإختفاء
-            
-            // نبدأ في وضع medium
-            currentSheetState = .medium
-            hospitalBottomConstraint.constant = sheetMediumConstant
-            view.layoutIfNeeded()
-        }
     }
     
     private func setupSearchBar() {
@@ -146,25 +142,17 @@ class ParamedicNearbyViewController: UIViewController {
     }
     
     func setStartingLocation() {
-        
         let location = CLLocationCoordinate2D(latitude: 29.9560079, longitude: 31.0938121)
         let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let region = MKCoordinateRegion(center: location, span: span)
         myMap.setRegion(region, animated: true)
-//        myMap.setCameraBoundary(MKMapView.CameraBoundary(coordinateRegion: region), animated: true)
+        
         let zoomRange = MKMapView.CameraZoomRange(maxCenterCoordinateDistance: 2800000)
         myMap.setCameraZoomRange(zoomRange, animated: true)
     }
     
     // MARK: - إضافة الـ Annotations الخاصة بالمستشفيات على الخريطة
     func addHospitalsAnnotations() {
-        
-        // إحداثيات كل مستشفى بنفس ترتيب array
-        let hospitalCoordinates: [CLLocationCoordinate2D] = [
-            CLLocationCoordinate2D(latitude: 29.9553802, longitude: 31.0946302),
-            CLLocationCoordinate2D(latitude: 29.955800, longitude: 31.093500),
-            CLLocationCoordinate2D(latitude: 29.956400, longitude: 31.094200)
-        ]
         
         let count = min(array.count, hospitalCoordinates.count)
         
@@ -187,174 +175,263 @@ class ParamedicNearbyViewController: UIViewController {
             myMap.addAnnotation(annotation)
         }
     }
-
+    
     @IBAction func backbutton(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
-        
-        if let loginVC = storyboard.instantiateViewController(withIdentifier: "HomeTabBar") as? HomeTabBarViewController {
-            loginVC.modalPresentationStyle = .fullScreen
-            loginVC.modalTransitionStyle = .crossDissolve
-            present(loginVC, animated: false)
-        }
-        
+        dismiss(animated: true)
+
     }
     
+    @IBAction func hospitalButton(_ sender: Any) {
+        ishospital = true
+        updateModeButtonsUI()
+
+        showCurrentSheet()
+    }
+    
+    @IBAction func doctorButton(_ sender: Any) {
+        ishospital = false
+        updateModeButtonsUI()
+
+        showCurrentSheet()
+
+    }
+    private func updateModeButtonsUI() {
+        if ishospital {
+            hospitalButt.tintColor = .systemBlue
+            hospitalButt.setTitleColor(.white, for: .normal)
+            
+            doctorButt.tintColor = .white
+            doctorButt.setTitleColor(.systemGray, for: .normal)
+        } else {
+            doctorButt.tintColor = .systemBlue
+            doctorButt.setTitleColor(.white, for: .normal)
+            
+            hospitalButt.tintColor = .white
+            hospitalButt.setTitleColor(.systemGray, for: .normal)
+        }
+    }
+
+    // ✅ Added: زوم على المستشفى لما تختاره من الجدول
+    private func focusOnHospital(index: Int) {
+        guard index >= 0, index < hospitalCoordinates.count else { return }
+        let coord = hospitalCoordinates[index]
+        let region = MKCoordinateRegion(center: coord, latitudinalMeters: 300, longitudinalMeters: 300)
+        myMap.setRegion(region, animated: true)
+        
+        // اختياري: select للـ annotation
+        if let ann = myMap.annotations.compactMap({ $0 as? HospitalAnnotation }).first(where: { $0.tableIndex == index }) {
+            myMap.selectAnnotation(ann, animated: true)
+        }
+    }
 }
 
-// MARK: - Bottom Sheet: pan gesture
+// MARK: - Bottom Sheet
 
 extension ParamedicNearbyViewController {
-    private func setupSheetPanGesture() {
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(handleSheetPan(_:)))
-        hospitalView.addGestureRecognizer(pan)
+    private func showCurrentSheet(selectIndex: Int? = nil) {
+        if ishospital {
+            showHospitalSheet(selectIndex: selectIndex)
+        } else {
+            showDoctorSheet(selectIndex: selectIndex)
+        }
     }
-    
-    private func addGrabberToSheet() {
-        let grabber = UIView()
-        grabber.translatesAutoresizingMaskIntoConstraints = false
-        grabber.backgroundColor = UIColor.systemGray3
-        grabber.layer.cornerRadius = 2
-        
-        hospitalView.addSubview(grabber)
-        
-        NSLayoutConstraint.activate([
-            grabber.topAnchor.constraint(equalTo: hospitalView.topAnchor, constant: 8),
-            grabber.centerXAnchor.constraint(equalTo: hospitalView.centerXAnchor),
-            grabber.widthAnchor.constraint(equalToConstant: 40),
-            grabber.heightAnchor.constraint(equalToConstant: 4)
-        ])
-    }
-    
-    private func moveSheet(to state: SheetState, animated: Bool = true) {
+
+    // ✅ Added: تغيير وضع الشيت (min / mid / up)
+    private func moveSheet(to state: SheetState) {
+        let currentVC: UIViewController? = ishospital ? hospitalSheetVC : doctorSheetVC
+        guard let sheetVC = currentVC,
+              let sheet = sheetVC.sheetPresentationController else { return }
+
         currentSheetState = state
         
-        switch state {
-        case .expanded:
-            hospitalBottomConstraint.constant = sheetExpandedConstant
-        case .medium:
-            hospitalBottomConstraint.constant = sheetMediumConstant
-        case .hidden:
-            hospitalBottomConstraint.constant = sheetHiddenConstant
-        }
-        
-        let animations = {
-            self.view.layoutIfNeeded()
-        }
-        
-        if animated {
-            UIView.animate(withDuration: 0.3,
-                           delay: 0,
-                           usingSpringWithDamping: 0.9,
-                           initialSpringVelocity: 0.8,
-                           options: [.curveEaseInOut],
-                           animations: animations,
-                           completion: nil)
+        if #available(iOS 16.0, *) {
+            let targetId: UISheetPresentationController.Detent.Identifier
+            switch state {
+            case .hidden:   targetId = UISheetPresentationController.Detent.Identifier("min")
+            case .medium:   targetId = UISheetPresentationController.Detent.Identifier("mid")
+            case .expanded: targetId = UISheetPresentationController.Detent.Identifier("up")
+            }
+            
+            sheet.animateChanges {
+                sheet.selectedDetentIdentifier = targetId
+            }
+            
         } else {
-            animations()
+            // iOS 15 fallback
+            let targetId: UISheetPresentationController.Detent.Identifier
+            switch state {
+            case .hidden, .medium: targetId = .medium
+            case .expanded:        targetId = .large
+            }
+            sheet.selectedDetentIdentifier = targetId
         }
     }
     
-    @objc private func handleSheetPan(_ gesture: UIPanGestureRecognizer) {
-        let translation = gesture.translation(in: view)
-        let velocity = gesture.velocity(in: view).y
+    private func showHospitalSheet(selectIndex: Int? = nil) {
+        // لو في presented VC مش الشيت، ما نبوظش الدنيا
+        // ✅ لو المفتوح doctor وإنت عايز hospital -> اقفله وافتح hospital
+        if let presented = presentedViewController, presented is DoctorMapViewController {
+            presented.dismiss(animated: false) { [weak self] in
+                self?.showHospitalSheet(selectIndex: selectIndex)
+            }
+            return
+        }
+
+        // لو الشيت مفتوح بالفعل
+        if let sheetVC = hospitalSheetVC, presentedViewController === sheetVC {
+            if let idx = selectIndex {
+                sheetVC.selectHospitalRow(index: idx)
+            }
+            moveSheet(to: .medium)
+            return
+        }
         
-        switch gesture.state {
-        case .began:
-            panStartConstant = hospitalBottomConstraint.constant
+        let sb = UIStoryboard(name: "Patient", bundle: nil)
+        guard let vc = sb.instantiateViewController(withIdentifier: "HospitalMap") as? HospitalMapViewController else {
+            print("❌ testSheet ID/class مشكلة")
+            return
+        }
+        
+        // ✅ خلي نفس الداتا في الشيت (متزامنة مع الخريطة)
+        vc.array = self.array
+        
+        // ✅ نخزن reference
+        self.hospitalSheetVC = vc
+        
+        // ✅ Prevent swipe-to-dismiss (ما تتقفلش بالسحب)
+        vc.isModalInPresentation = true
+        vc.modalPresentationStyle = .pageSheet
+        
+        // ✅ Callback: لما تختار مستشفى من الجدول -> زوم على الخريطة
+        vc.onHospitalSelected = { [weak self] index, _ in
+            self?.focusOnHospital(index: index)
+        }
+        
+        if let sheet = vc.sheetPresentationController {
             
-        case .changed:
-            let newConstant = panStartConstant - translation.y
-            hospitalBottomConstraint.constant = min(
-                max(newConstant, sheetExpandedConstant),
-                sheetHiddenConstant
-            )
-            view.layoutIfNeeded()
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
             
-        case .ended, .cancelled:
-            let position = hospitalBottomConstraint.constant
-            
-            var targetState: SheetState
-            
-            // لو السحب سريع لتحت → اخفي
-            if velocity > 1000 {
-                targetState = .hidden
-            }
-            // لو السحب سريع لفوق → expanded
-            else if velocity < -1000 {
-                targetState = .expanded
-            }
-            else {
-                // اختار أقرب detent
-                let toExpanded = abs(position - sheetExpandedConstant)
-                let toMedium   = abs(position - sheetMediumConstant)
-                let toHidden   = abs(position - sheetHiddenConstant)
+            if #available(iOS 16.0, *) {
                 
-                let minDistance = min(toExpanded, toMedium, toHidden)
+                let minId = UISheetPresentationController.Detent.Identifier("min")
+                let midId = UISheetPresentationController.Detent.Identifier("mid")
+                let upId  = UISheetPresentationController.Detent.Identifier("up")
                 
-                if minDistance == toExpanded {
-                    targetState = .expanded
-                } else if minDistance == toMedium {
-                    targetState = .medium
-                } else {
-                    targetState = .hidden
+                let minDetent = UISheetPresentationController.Detent.custom(identifier: minId) { context in
+                    context.maximumDetentValue * 0.20   // 20% (صغير تحت)
+                }
+                
+                let midDetent = UISheetPresentationController.Detent.custom(identifier: midId) { context in
+                    context.maximumDetentValue * 0.50   // 50% (نص)
+                }
+                
+                let upDetent = UISheetPresentationController.Detent.custom(identifier: upId) { context in
+                    context.maximumDetentValue * 1.0    // 100% (فوق)
+                }
+                
+                sheet.detents = [minDetent, midDetent, upDetent]
+                sheet.selectedDetentIdentifier = midId
+                sheet.largestUndimmedDetentIdentifier = upId
+                
+            } else {
+                sheet.detents = [.medium(), .large()]
+                sheet.selectedDetentIdentifier = .medium
+                sheet.largestUndimmedDetentIdentifier = .large
+            }
+        }
+        
+        present(vc, animated: true) { [weak self] in
+            // لو جايين من annotation وعايزين نحدد row بعد ما الشيت يظهر
+            if let idx = selectIndex {
+                vc.selectHospitalRow(index: idx)
+                self?.moveSheet(to: .medium)
+            }
+        }
+    }
+    private func showDoctorSheet(selectIndex: Int? = nil) {
+        
+        // لو في presented VC مش DoctorSheet، ما نبوظش الدنيا
+        if let presented = presentedViewController,
+           !(presented is DoctorMapViewController) {
+            // لو المفتوح hospital وعايز doctor (أو العكس) اقفله وافتح الجديد
+            if presented is HospitalMapViewController {
+                presented.dismiss(animated: false) { [weak self] in
+                    self?.showDoctorSheet(selectIndex: selectIndex)
                 }
             }
-            
-            moveSheet(to: targetState)
-            
-        default:
-            break
+            return
         }
-    }
-}
-
-// MARK: - TableView
-
-extension ParamedicNearbyViewController : UITableViewDataSource , UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return array.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = myTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ParamedicTableViewCell
-        cell.hospitalName.text = array[indexPath.row].name
-        cell.hospitalAddress.text = array[indexPath.row].address
-        cell.lblAddressCar.text = array[indexPath.row].lblAddressCar
-        cell.lblAddress.text = array[indexPath.row].lblAddress
-        cell.lblDistance.text = array[indexPath.row].lblDistance
         
-        cell.onButtonTap = { [weak self] in
-            guard let self = self else { return }
+        // لو الشيت مفتوح بالفعل
+        if let sheetVC = doctorSheetVC, presentedViewController === sheetVC {
+            if let idx = selectIndex {
+                sheetVC.selectDoctorRow(index: idx) // اختياري لو عندك
+            }
+            moveSheet(to: .medium)
+            return
+        }
+        
+        let sb = UIStoryboard(name: "Patient", bundle: nil)
+        guard let vc = sb.instantiateViewController(withIdentifier: "DoctorMap") as? DoctorMapViewController else {
+            print("❌ DoctorMap ID/class مشكلة")
+            return
+        }
+        
+        self.doctorSheetVC = vc
+        
+        vc.isModalInPresentation = true
+        vc.modalPresentationStyle = .pageSheet
+        
+        if let sheet = vc.sheetPresentationController {
             
-            let storyboard = UIStoryboard(name: "Patient", bundle: nil)
-            if let loginVC = storyboard.instantiateViewController(withIdentifier: "HospitalDetails") as? HospitalDetailsViewController {
-                loginVC.modalPresentationStyle = .fullScreen
-                loginVC.modalTransitionStyle = .crossDissolve
-                self.present(loginVC, animated: false)
+            sheet.prefersGrabberVisible = true
+            sheet.preferredCornerRadius = 20
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+            
+            if #available(iOS 16.0, *) {
+                
+                let minId = UISheetPresentationController.Detent.Identifier("min")
+                let midId = UISheetPresentationController.Detent.Identifier("mid")
+                let upId  = UISheetPresentationController.Detent.Identifier("up")
+                
+                let minDetent = UISheetPresentationController.Detent.custom(identifier: minId) { context in
+                    context.maximumDetentValue * 0.20
+                }
+                
+                let midDetent = UISheetPresentationController.Detent.custom(identifier: midId) { context in
+                    context.maximumDetentValue * 0.50
+                }
+                
+                let upDetent = UISheetPresentationController.Detent.custom(identifier: upId) { context in
+                    context.maximumDetentValue * 1.0
+                }
+                
+                sheet.detents = [minDetent, midDetent, upDetent]
+                sheet.selectedDetentIdentifier = midId
+                sheet.largestUndimmedDetentIdentifier = upId
+                
+            } else {
+                sheet.detents = [.medium(), .large()]
+                sheet.selectedDetentIdentifier = .medium
+                sheet.largestUndimmedDetentIdentifier = .large
             }
         }
         
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 160
-    }
-    
-    // لما يختار مستشفى من الجدول
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
-        if let loginVC = storyboard.instantiateViewController(withIdentifier: "HospitalDetails") as? HospitalDetailsViewController {
-            loginVC.modalPresentationStyle = .fullScreen
-            loginVC.modalTransitionStyle = .crossDissolve
-            self.present(loginVC, animated: false)
+        present(vc, animated: true) { [weak self] in
+            // لو عايز تعمل selectIndex هنا للدكتور بعد ما يفتح
+            if selectIndex != nil {
+                self?.moveSheet(to: .medium)
+            }
         }
     }
+
 }
 
 // MARK: - Location + Map
 
-extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDelegate {
+extension ParamedicNearbyViewController: CLLocationManagerDelegate, MKMapViewDelegate {
     
     func islocationservicesavailable() -> Bool {
         return CLLocationManager.locationServicesEnabled()
@@ -370,12 +447,10 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
             locationManager.requestAlwaysAuthorization()
             locationManager.startUpdatingLocation()
             myMap.showsUserLocation = true
-            
             break
         case .authorizedAlways:
             locationManager.startUpdatingLocation()
             myMap.showsUserLocation = true
-            
             break
         case .denied:
             showMsg("please authorize Access to Location")
@@ -408,16 +483,13 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
             locationManager.startUpdatingLocation()
             myMap.showsUserLocation = true
             break
-            
         case .authorizedAlways:
             locationManager.startUpdatingLocation()
             myMap.showsUserLocation = true
             break
-            
         case .denied:
             showMsg("please authorize Access to Location")
             break
-            
         default:
             print("default..")
         }
@@ -440,7 +512,7 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
     }
     
     // عشان يعمل زوم لمكان المستخدم
-    func zoomToUserLocatio(location : CLLocation) {
+    func zoomToUserLocatio(location: CLLocation) {
         let region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: 250, longitudinalMeters: 250)
         myMap.setRegion(region, animated: true)
     }
@@ -480,21 +552,14 @@ extension ParamedicNearbyViewController : CLLocationManagerDelegate, MKMapViewDe
         
         let indexPath = IndexPath(row: index, section: 0)
         
-        // اختار الـ row في الجدول
-        myTableView.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+        // ✅ بدل ما كان myTableView غير موجود هنا:
+        // نضمن الشيت مفتوح وبعدين نحدد الـ row جوّه جدول الشيت
+        showCurrentSheet(selectIndex: index)
         
-        // افتح الـ bottom sheet على expanded
+        // اختار الـ row في الجدول (بتاع الشيت)
+        myTableView?.selectRow(at: indexPath, animated: true, scrollPosition: .middle)
+        
+        // افتح الـ bottom sheet على medium
         moveSheet(to: .medium)
-//        currentSheetState = .medium
-        // لو عايز تفتح التفاصيل كمان:
-        // tableView(myTableView, didSelectRowAt: indexPath)
     }
 }
-
-//struct ItemHospital {
-//    var name : String
-//    var address : String
-//    var lblAddressCar : String
-//    var lblAddress : String
-//    var lblDistance : String
-//}

@@ -70,6 +70,18 @@ class PinViewController: UIViewController {
     }
     
     
+    @IBAction func goToMyAppointmentButton(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Patient", bundle: nil)
+        
+        if let loginVC = storyboard.instantiateViewController(withIdentifier: "Appointment") as? AppointmentViewController {
+            loginVC.modalPresentationStyle = .fullScreen
+            loginVC.modalTransitionStyle = .crossDissolve
+            present(loginVC, animated: false)
+        }
+
+    }
+    
+    
 //    @IBAction func doneButton(_ sender: Any) {
 //        let context = LAContext()
 //        var error: NSError? = nil

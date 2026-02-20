@@ -1,23 +1,30 @@
-//
-//  RegisterResponse.swift
-//  wiqaya
-//
-//  Created by AhmadALshafei on 10/20/25.
-//
 import Foundation
 
 // MARK: - Error Response
-struct ErrorResponse: Codable, Error {
+struct ErrorResponse: Codable, LocalizedError {
     var message: [String]?
     var statusCode: Int?
+    
+    var errorDescription: String? {
+        return message?.first ?? "حدث خطأ غير متوقع"
+    }
 }
 
 // MARK: - Register Response
 struct RegisterResponse: Codable {
+    let statusCode: Int
     let message: String
+    let messageResponse: RegisterData
     let data: UserData
+    let timestamp: String
+    let path: String
 }
 
+struct RegisterData: Codable {
+    let message: String
+}
+
+// MARK: - User Data
 struct UserData: Codable {
     let id: String
     let email: String
@@ -35,41 +42,15 @@ struct UserData: Codable {
 
 // MARK: - Login Response
 struct LoginResponse: Codable {
-    let tokens: Tokens
-    let date: LoginDate
+    let data: LoginTokens
 }
 
-struct Tokens: Codable {
-    let accessToken: String
-    let refreshToken: String
+struct LoginTokens: Codable {
+    let access_token: String
+    let refresh_token: String
 }
 
-struct LoginDate: Codable {
-    let payload: LoginPayload
-}
-
-struct LoginPayload: Codable {
-    let id: String
-    let name: String
-    let username: String?
-    let email: String
-    let role: String
-}
-
-// MARK: - Password Reset / Verify Responses
-
-/// ✅ عند طلب كود إعادة التعيين (request-password-reset)
-struct PasswordResetRequestResponse: Codable {
-    let message: String
-}
-
-/// ✅ عند التحقق من الكود (verify-reset-code)
-struct VerifyCodeResponse: Codable {
-    let resetToken: String?
-    let message: String?
-}
-
-/// ✅ عند إعادة تعيين كلمة المرور فعليًا (reset-password)
-struct ResetPasswordResponse: Codable {
+// MARK: - Message Response
+struct MessageResponse: Codable {
     let message: String
 }
